@@ -1,0 +1,35 @@
+// HttpUploader.idl : IDL source for HttpUploader
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (HttpUploader.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(F6A0A1C9-F652-4FDD-A455-1402D4C97C8E),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IUploader : IDispatch{
+  [id(1), helpstring("test")] HRESULT Test([out,retval] LONG* result);
+};
+[
+	uuid(ED6FA5A2-ACE5-4A5B-8899-72711BF827FC),
+	version(1.0),
+]
+library HttpUploaderLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(3F31A1AB-6A27-4459-B9D8-C8C459F1F30D)		
+	]
+	coclass Uploader
+	{
+		[default] interface IUploader;
+	};
+};
+
