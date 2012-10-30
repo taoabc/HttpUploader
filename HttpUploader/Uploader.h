@@ -57,11 +57,11 @@ public:
   STDMETHOD(SetSite)(IUnknown* punksite);
 
 
-
   STDMETHOD(Test)(LONG* result);
 
 private:
   CComQIPtr<IWebBrowser2> pwebbrowser_;
+  CComQIPtr<IHTMLDocument2> phtmldoc_;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)
