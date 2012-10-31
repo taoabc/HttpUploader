@@ -16,6 +16,7 @@ import "ocidl.idl";
 ]
 interface IUploader : IDispatch{
   [id(1), helpstring("test")] HRESULT Test([out,retval] LONG* result);
+  [id(2)] HRESULT ShowDialog(void);
 };
 [
 	uuid(ED6FA5A2-ACE5-4A5B-8899-72711BF827FC),

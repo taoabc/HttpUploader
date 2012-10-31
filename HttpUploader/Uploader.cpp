@@ -42,3 +42,9 @@ STDMETHODIMP CUploader::Test(LONG* result) {
   *result = 3;
   return S_OK;
 }
+
+STDMETHODIMP CUploader::ShowDialog(void) {
+  // TODO: Add your implementation code here
+
+  return S_OK;
+}

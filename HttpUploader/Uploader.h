@@ -3,9 +3,9 @@
 #pragma once
 #include "resource.h"       // main symbols
 
-
-
 #include "HttpUploader_i.h"
+
+#include <atlctl.h>
 
 
 
@@ -19,14 +19,13 @@ using namespace ATL;
 // CUploader
 
 class ATL_NO_VTABLE CUploader :
-	public CComObjectRootEx<CComSingleThreadModel>,
-	public CComCoClass<CUploader, &CLSID_Uploader>,
-	public IObjectWithSiteImpl<CUploader>,
-	public IDispatchImpl<IUploader, &IID_IUploader, &LIBID_HttpUploaderLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
-{
+	  public CComObjectRootEx<CComSingleThreadModel>,
+	  public CComCoClass<CUploader, &CLSID_Uploader>,
+	  public IObjectWithSiteImpl<CUploader>,
+	  public IDispatchImpl<IUploader, &IID_IUploader, &LIBID_HttpUploaderLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
+    public IObjectSafetyImpl<CUploader, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA> {
 public:
-	CUploader()
-	{
+	CUploader()	{
 	}
 
 DECLARE_REGISTRY_RESOURCEID(IDR_UPLOADER)
@@ -37,31 +36,33 @@ BEGIN_COM_MAP(CUploader)
 	COM_INTERFACE_ENTRY(IUploader)
 	COM_INTERFACE_ENTRY(IDispatch)
 	COM_INTERFACE_ENTRY(IObjectWithSite)
+  COM_INTERFACE_ENTRY(IObjectSafety)
 END_COM_MAP()
 
 
 
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-	HRESULT FinalConstruct()
-	{
+	HRESULT FinalConstruct() {
 		return S_OK;
 	}
 
-	void FinalRelease()
-	{
+	void FinalRelease() {
 	}
 
 public:
   // IObjectWithSite
   STDMETHOD(SetSite)(IUnknown* punksite);
 
-
-  STDMETHOD(Test)(LONG* result);
-
 private:
+
   CComQIPtr<IWebBrowser2> pwebbrowser_;
   CComQIPtr<IHTMLDocument2> phtmldoc_;
+
+public:
+
+  STDMETHOD(Test)(LONG* result);
+  STDMETHOD(ShowDialog)(void);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)
