@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Wed Oct 31 15:21:25 2012
+/* at Thu Nov 01 18:33:53 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
@@ -91,6 +91,17 @@ EXTERN_C const IID IID_IUploader;
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Test( 
             /* [retval][out] */ LONG *result) = 0;
         
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE ShowDialog( void) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_UrlPost( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_UrlPost( 
+            /* [in] */ BSTR newVal) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetSelectedFiles( 
+            /* [retval][out] */ SAFEARRAY * *result) = 0;
+        
     };
     
     
@@ -153,6 +164,21 @@ EXTERN_C const IID IID_IUploader;
             IUploader * This,
             /* [retval][out] */ LONG *result);
         
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *ShowDialog )( 
+            IUploader * This);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_UrlPost )( 
+            IUploader * This,
+            /* [retval][out] */ BSTR *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_UrlPost )( 
+            IUploader * This,
+            /* [in] */ BSTR newVal);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetSelectedFiles )( 
+            IUploader * This,
+            /* [retval][out] */ SAFEARRAY * *result);
+        
         END_INTERFACE
     } IUploaderVtbl;
 
@@ -192,6 +218,18 @@ EXTERN_C const IID IID_IUploader;
 #define IUploader_Test(This,result)	\
     ( (This)->lpVtbl -> Test(This,result) ) 
 
+#define IUploader_ShowDialog(This)	\
+    ( (This)->lpVtbl -> ShowDialog(This) ) 
+
+#define IUploader_get_UrlPost(This,pVal)	\
+    ( (This)->lpVtbl -> get_UrlPost(This,pVal) ) 
+
+#define IUploader_put_UrlPost(This,newVal)	\
+    ( (This)->lpVtbl -> put_UrlPost(This,newVal) ) 
+
+#define IUploader_GetSelectedFiles(This,result)	\
+    ( (This)->lpVtbl -> GetSelectedFiles(This,result) ) 
+
 #endif /* COBJMACROS */
 
 
@@ -223,6 +261,16 @@ Uploader;
 #endif /* __HttpUploaderLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */
+
+unsigned long             __RPC_USER  BSTR_UserSize(     unsigned long *, unsigned long            , BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserMarshal(  unsigned long *, unsigned char *, BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserUnmarshal(unsigned long *, unsigned char *, BSTR * ); 
+void                      __RPC_USER  BSTR_UserFree(     unsigned long *, BSTR * ); 
+
+unsigned long             __RPC_USER  LPSAFEARRAY_UserSize(     unsigned long *, unsigned long            , LPSAFEARRAY * ); 
+unsigned char * __RPC_USER  LPSAFEARRAY_UserMarshal(  unsigned long *, unsigned char *, LPSAFEARRAY * ); 
+unsigned char * __RPC_USER  LPSAFEARRAY_UserUnmarshal(unsigned long *, unsigned char *, LPSAFEARRAY * ); 
+void                      __RPC_USER  LPSAFEARRAY_UserFree(     unsigned long *, LPSAFEARRAY * ); 
 
 /* end of Additional Prototypes */
 

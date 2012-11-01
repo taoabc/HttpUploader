@@ -48,3 +48,39 @@ STDMETHODIMP CUploader::ShowDialog(void) {
 
   return S_OK;
 }
+
+
+STDMETHODIMP CUploader::get_UrlPost(BSTR* pVal)
+{
+  // TODO: Add your implementation code here
+  *pVal = post_url_;
+  return S_OK;
+}
+
+
+STDMETHODIMP CUploader::put_UrlPost(BSTR newVal)
+{
+  // TODO: Add your implementation code here
+  post_url_ = newVal;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::GetSelectedFiles(SAFEARRAY** result)
+{
+  // TODO: Add your implementation code here
+  SAFEARRAY* psa;
+  SAFEARRAYBOUND rgsabound[1];
+  rgsabound[0].cElements = 2;
+  rgsabound[0].lLbound = 0;
+  psa = SafeArrayCreate(VT_I4, 1, rgsabound);
+  long idx = 0;
+  long l = 34;
+  SafeArrayPutElement(psa, &idx, &l);
+  idx = 1;
+  l = 542;
+  SafeArrayPutElement(psa, &idx, &l);
+  /*result->vt = VT_ARRAY;
+  result->parray = psa;*/
+  *result = psa;
+  return S_OK;
+}

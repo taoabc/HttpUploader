@@ -58,11 +58,15 @@ private:
 
   CComQIPtr<IWebBrowser2> pwebbrowser_;
   CComQIPtr<IHTMLDocument2> phtmldoc_;
+  CComBSTR post_url_;
 
 public:
 
   STDMETHOD(Test)(LONG* result);
   STDMETHOD(ShowDialog)(void);
+  STDMETHOD(get_UrlPost)(BSTR* pVal);
+  STDMETHOD(put_UrlPost)(BSTR newVal);
+  STDMETHOD(GetSelectedFiles)(SAFEARRAY** result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)

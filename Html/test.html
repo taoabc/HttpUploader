@@ -13,7 +13,12 @@
       }
       var ret;
       ret = Uploader.Test();
+      alert(Uploader.UrlPost);
+      Uploader.UrlPost = "http://baidu.com";
       alert(ret);
+      alert(Uploader.UrlPost);
+      var selected = Uploader.GetSelectedFiles();
+      alert(typeof(selected));
     </script>
   </body>
 </html>
