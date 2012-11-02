@@ -19,7 +19,7 @@ interface IUploader : IDispatch{
   [id(2)] HRESULT ShowDialog(void);
   [propget, id(3), helpstring("file upload address")] HRESULT UrlPost([out, retval] BSTR* pVal);
   [propput, id(3), helpstring("file upload address")] HRESULT UrlPost([in] BSTR newVal);
-  [id(4), helpstring("get selected filename list")] HRESULT GetSelectedFiles([out,retval] SAFEARRAY(LONG)* result);
+  [id(4), helpstring("get selected filename list")] HRESULT GetSelectedFiles([out,retval] IDispatch** result);
 };
 [
 	uuid(ED6FA5A2-ACE5-4A5B-8899-72711BF827FC),

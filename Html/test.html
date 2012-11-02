@@ -3,22 +3,26 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>plugin test</title>
     <object id="Uploader" classid="clsid:3F31A1AB-6A27-4459-B9D8-C8C459F1F30D"></object>
+    <script type="text/javascript">
+			function AppendOutput(txt) {
+				var e = document.getElementById("output");
+				e.value = e.value + "\n" + txt;
+			}
+      function ShowDialog() {
+        Uploader.ShowDialog();
+				AppendOutput("asdfadsf");
+      }
+			function ClearOutput() {
+				var e = document.getElementById("output");
+				e.value = ""
+			}
+    </script>
   </head>
   
   <body>
-    <script type="text/javascript">
-      function JsTest(a, b, c) {
-        alert("js Test a is " + a + " b is " + b + " c is " + c);
-        return 3;
-      }
-      var ret;
-      ret = Uploader.Test();
-      alert(Uploader.UrlPost);
-      Uploader.UrlPost = "http://baidu.com";
-      alert(ret);
-      alert(Uploader.UrlPost);
-      var selected = Uploader.GetSelectedFiles();
-      alert(typeof(selected));
-    </script>
+    <button onClick="javascript:ShowDialog()" style="top:0;">ShowDialog</button>
+    <button Onclick="javascript:ClearOutput()" style="">ClearOutput</button>
+		<p />
+    <textarea id="output" style="margin-top:20px;width:80%;height:300px;"></textarea>
   </body>
 </html>

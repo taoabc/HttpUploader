@@ -6,7 +6,9 @@
 #include "HttpUploader_i.h"
 
 #include <atlctl.h>
-
+#include <atlcoll.h>
+#include <vector>
+#include <string>
 
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
@@ -39,8 +41,6 @@ BEGIN_COM_MAP(CUploader)
   COM_INTERFACE_ENTRY(IObjectSafety)
 END_COM_MAP()
 
-
-
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 
 	HRESULT FinalConstruct() {
@@ -56,9 +56,14 @@ public:
 
 private:
 
+  bool GetOpenFiles(HWND hwnd, std::vector<std::wstring>* pvec);
+
   CComQIPtr<IWebBrowser2> pwebbrowser_;
   CComQIPtr<IHTMLDocument2> phtmldoc_;
+  HWND hwnd_browser_;
   CComBSTR post_url_;
+  CAtlArray<CComBSTR> selected_file_path_;
+  CAtlArray<CComBSTR> selected_file_name_;
 
 public:
 
@@ -66,7 +71,7 @@ public:
   STDMETHOD(ShowDialog)(void);
   STDMETHOD(get_UrlPost)(BSTR* pVal);
   STDMETHOD(put_UrlPost)(BSTR newVal);
-  STDMETHOD(GetSelectedFiles)(SAFEARRAY** result);
+  STDMETHOD(GetSelectedFiles)(IDispatch** result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)

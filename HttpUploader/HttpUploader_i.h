@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Thu Nov 01 18:33:53 2012
+/* at Fri Nov 02 11:10:00 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
@@ -100,7 +100,7 @@ EXTERN_C const IID IID_IUploader;
             /* [in] */ BSTR newVal) = 0;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetSelectedFiles( 
-            /* [retval][out] */ SAFEARRAY * *result) = 0;
+            /* [retval][out] */ IDispatch **result) = 0;
         
     };
     
@@ -177,7 +177,7 @@ EXTERN_C const IID IID_IUploader;
         
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetSelectedFiles )( 
             IUploader * This,
-            /* [retval][out] */ SAFEARRAY * *result);
+            /* [retval][out] */ IDispatch **result);
         
         END_INTERFACE
     } IUploaderVtbl;
@@ -266,11 +266,6 @@ unsigned long             __RPC_USER  BSTR_UserSize(     unsigned long *, unsign
 unsigned char * __RPC_USER  BSTR_UserMarshal(  unsigned long *, unsigned char *, BSTR * ); 
 unsigned char * __RPC_USER  BSTR_UserUnmarshal(unsigned long *, unsigned char *, BSTR * ); 
 void                      __RPC_USER  BSTR_UserFree(     unsigned long *, BSTR * ); 
-
-unsigned long             __RPC_USER  LPSAFEARRAY_UserSize(     unsigned long *, unsigned long            , LPSAFEARRAY * ); 
-unsigned char * __RPC_USER  LPSAFEARRAY_UserMarshal(  unsigned long *, unsigned char *, LPSAFEARRAY * ); 
-unsigned char * __RPC_USER  LPSAFEARRAY_UserUnmarshal(unsigned long *, unsigned char *, LPSAFEARRAY * ); 
-void                      __RPC_USER  LPSAFEARRAY_UserFree(     unsigned long *, LPSAFEARRAY * ); 
 
 /* end of Additional Prototypes */
 
