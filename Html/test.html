@@ -10,7 +10,10 @@
 			}
       function ShowDialog() {
         Uploader.ShowDialog();
-				AppendOutput("asdfadsf");
+				var selected = Uploader.GetSelectedFiles();
+				for (var i = 0; i < selected.Size(); ++i) {
+					AppendOutput(selected.At(i));
+				}
       }
 			function ClearOutput() {
 				var e = document.getElementById("output");

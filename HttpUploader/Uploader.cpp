@@ -56,10 +56,14 @@ STDMETHODIMP CUploader::ShowDialog(void) {
   // TODO: Add your implementation code here
   std::vector<std::wstring> vec;
   GetOpenFiles(hwnd_browser_, &vec);
+  std::wstring dir;
   std::wstring name;
+  selected_file_name_.RemoveAll();
+  selected_file_path_.RemoveAll();
   for (std::wstring i : vec) {
-    ult::ToUpperpathAndFilename(i, L"\\", NULL, &name);
+    ult::ToUpperpathAndFilename(i, L"\\", &dir, &name);
     selected_file_path_.Add(i.c_str());
+    selected_file_name_.Add(name.c_str());
   }
   return S_OK;
 }
@@ -107,7 +111,7 @@ bool CUploader::GetOpenFiles(HWND hwnd, std::vector<std::wstring>* pvec) {
   wchar_t* p = files;
   std::wstring dir(p);
   p += wcslen(p) + 1;
-  if (p == NULL) {
+  if (*p == NULL) {
     pvec->push_back(dir);
   }
   while (*p != NULL) {
