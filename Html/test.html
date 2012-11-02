@@ -24,7 +24,8 @@
         Uploader.Test();
       }
       function OnPostFile(id, speed, posted, percent, lefttime) {
-        alert(id + " " + speed + " " + posted + " " + percent + " " + lefttime);
+        AppendOutput("OnPost id:" + id + " speed:" + speed + " posted:"
+            + posted + " percent:" + percent + " lefttime:" + lefttime);
       }
     </script>
   </head>
