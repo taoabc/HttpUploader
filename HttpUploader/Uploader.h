@@ -56,7 +56,16 @@ public:
 
 private:
 
+  //project independent
   bool GetOpenFiles(HWND hwnd, std::vector<std::wstring>* pvec);
+
+  HRESULT InvokeMethod(IDispatch* disp, VARIANT* param, UINT args, VARIANT* result);
+  HRESULT InvokeMethod(IDispatch* disp, DISPID dispid, VARIANT* param, UINT args, VARIANT* result);
+  DISPID FindId(IDispatch* disp, LPOLESTR name);
+
+  //project related
+  HRESULT OnPost(int id, ULONGLONG speed, ULONGLONG posted, USHORT percent, UINT lefttime);
+  HRESULT OnStateChanged(int id, int state);
 
   CComQIPtr<IWebBrowser2> pwebbrowser_;
   CComQIPtr<IHTMLDocument2> phtmldoc_;
@@ -64,6 +73,9 @@ private:
   CComBSTR post_url_;
   CAtlArray<CComBSTR> selected_file_path_;
   CAtlArray<CComBSTR> selected_file_name_;
+  CComQIPtr<IDispatch> ontest_;
+  CComQIPtr<IDispatch> on_post_;
+  CComQIPtr<IDispatch> on_state_changed_;
 
 public:
 
@@ -72,6 +84,14 @@ public:
   STDMETHOD(get_UrlPost)(BSTR* pVal);
   STDMETHOD(put_UrlPost)(BSTR newVal);
   STDMETHOD(GetSelectedFiles)(IDispatch** result);
+  STDMETHOD(get_OnTest)(IDispatch** pVal);
+  STDMETHOD(put_OnTest)(IDispatch* newVal);
+  STDMETHOD(get_OnPost)(IDispatch** pVal);
+  STDMETHOD(put_OnPost)(IDispatch* newVal);
+  STDMETHOD(get_OnStateChanged)(IDispatch** pVal);
+  STDMETHOD(put_OnStateChanged)(IDispatch* newVal);
+  STDMETHOD(Post)(void);
+  STDMETHOD(Stop)(void);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)

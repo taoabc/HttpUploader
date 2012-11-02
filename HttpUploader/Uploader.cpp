@@ -32,7 +32,7 @@ STDMETHODIMP CUploader::SetSite(IUnknown* punksite) {
 
 STDMETHODIMP CUploader::Test(LONG* result) {
   // TODO: Add your implementation code here
-  CComQIPtr<IDispatch> pscript;
+  /*CComQIPtr<IDispatch> pscript;
   phtmldoc_->get_Script(&pscript);
   CComBSTR func_name(L"JsTest");
   DISPID dispid;
@@ -48,7 +48,14 @@ STDMETHODIMP CUploader::Test(LONG* result) {
     UINT arrerr = -1;
     hr = pscript->Invoke(dispid, IID_NULL, 0, DISPATCH_METHOD, &dispparams, &va_result, NULL, &arrerr);
   }
-  *result = 555;
+  *result = 555;*/
+  /*if (ontest_ != NULL) {
+    DISPPARAMS dispparams;
+    memset(&dispparams, 0, sizeof (dispparams));
+    CComVariant va_result;
+    ontest_->Invoke(0, IID_NULL, LOCALE_SYSTEM_DEFAULT, DISPATCH_METHOD, &dispparams, &va_result, NULL, NULL);
+  }*/
+  OnPost(1, 23, 235235, 45, 2636);
   return S_OK;
 }
 
@@ -122,4 +129,99 @@ bool CUploader::GetOpenFiles(HWND hwnd, std::vector<std::wstring>* pvec) {
   }
   delete[] files;
   return true;
+}
+
+STDMETHODIMP CUploader::get_OnTest(IDispatch** pVal) {
+  // TODO: Add your implementation code here
+  *pVal = ontest_;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::put_OnTest(IDispatch* newVal) {
+  // TODO: Add your implementation code here
+  ontest_ = newVal;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::get_OnPost(IDispatch** pVal) {
+  // TODO: Add your implementation code here
+  *pVal = on_post_;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::put_OnPost(IDispatch* newVal) {
+  // TODO: Add your implementation code here
+  on_post_ = newVal;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::get_OnStateChanged(IDispatch** pVal) {
+  // TODO: Add your implementation code here
+  *pVal = on_state_changed_;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::put_OnStateChanged(IDispatch* newVal) {
+  // TODO: Add your implementation code here
+  on_state_changed_ = newVal;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::Post(void) {
+  // TODO: Add your implementation code here
+
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::Stop(void) {
+  // TODO: Add your implementation code here
+
+  return S_OK;
+}
+
+HRESULT CUploader::InvokeMethod(IDispatch* disp, VARIANT* param, UINT args, VARIANT* result) {
+  return InvokeMethod(disp, 0, param, args, result);
+}
+
+HRESULT CUploader::InvokeMethod(IDispatch* disp, DISPID dispid, VARIANT* param, UINT args, VARIANT* result) {
+  DISPPARAMS ps;
+  ps.cArgs = args;
+  ps.rgvarg = param;
+  ps.cNamedArgs = 0;
+  ps.rgdispidNamedArgs = NULL;
+
+  return disp->Invoke(dispid, IID_NULL, LOCALE_SYSTEM_DEFAULT, DISPATCH_METHOD, &ps, result, NULL, NULL);
+}
+
+DISPID CUploader::FindId(IDispatch* disp, LPOLESTR name) {
+  DISPID id = 0;
+  if(FAILED(disp->GetIDsOfNames(IID_NULL, &name, 1, LOCALE_SYSTEM_DEFAULT, &id))) {
+    id = -1;
+  }
+  return id;
+}
+
+HRESULT CUploader::OnPost(int id, ULONGLONG speed, ULONGLONG posted, USHORT percent, UINT lefttime) {
+  if (on_post_ != NULL) {
+    CComVariant param[5];
+    param[0] = lefttime;
+    param[1] = percent;
+    param[2] = posted;
+    param[3] = speed;
+    param[4] = id;
+    CComVariant result;
+    InvokeMethod(on_post_, param, 5, &result);
+  } 
+  return S_OK;
+}
+
+HRESULT CUploader::OnStateChanged(int id, int state) {
+  if (on_state_changed_ != NULL) {
+    CComVariant param[2];
+    param[0] = state;
+    param[1] = id;
+    CComVariant result;
+    InvokeMethod(on_state_changed_, param, 2, &result);
+  }
+  return S_OK;
 }

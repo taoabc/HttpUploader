@@ -60,7 +60,7 @@ public:
     } else if (wcscmp(rgsz_names[0], L"At") == 0) {
       *rgdispid = 2;
     } else {
-      return E_UNEXPECTED;
+      return E_FAIL;
     }
     return S_OK;
   }

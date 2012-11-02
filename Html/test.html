@@ -4,28 +4,36 @@
     <title>plugin test</title>
     <object id="Uploader" classid="clsid:3F31A1AB-6A27-4459-B9D8-C8C459F1F30D"></object>
     <script type="text/javascript">
-			function AppendOutput(txt) {
-				var e = document.getElementById("output");
-				e.value = e.value + "\n" + txt;
-			}
+      function AppendOutput(txt) {
+        var e = document.getElementById("output");
+        e.value = e.value + "\n" + txt;
+      }
       function ShowDialog() {
         Uploader.ShowDialog();
-				var selected = Uploader.GetSelectedFiles();
-				for (var i = 0; i < selected.Size(); ++i) {
-					AppendOutput(selected.At(i));
-				}
+        var selected = Uploader.GetSelectedFiles();
+        for (var i = 0; i < selected.Size(); ++i) {
+          AppendOutput(selected.At(i));
+        }
       }
-			function ClearOutput() {
-				var e = document.getElementById("output");
-				e.value = ""
-			}
+      function ClearOutput() {
+        var e = document.getElementById("output");
+        e.value = ""
+      }
+      function Test() {
+        Uploader.OnPost = OnPostFile;
+        Uploader.Test();
+      }
+      function OnPostFile(id, speed, posted, percent, lefttime) {
+        alert(id + " " + speed + " " + posted + " " + percent + " " + lefttime);
+      }
     </script>
   </head>
   
   <body>
-    <button onClick="javascript:ShowDialog()" style="top:0;">ShowDialog</button>
-    <button Onclick="javascript:ClearOutput()" style="">ClearOutput</button>
-		<p />
+    <button OnClick="javascript:ShowDialog()" style="top:0;">ShowDialog</button>
+    <button OnClick="javascript:ClearOutput()" style="">ClearOutput</button>
+    <button OnClick="javascript:Test()">Test</button>
+    <p />
     <textarea id="output" style="margin-top:20px;width:80%;height:300px;"></textarea>
   </body>
 </html>

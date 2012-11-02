@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Fri Nov 02 11:10:00 2012
+/* at Fri Nov 02 22:30:08 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
@@ -102,6 +102,28 @@ EXTERN_C const IID IID_IUploader;
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetSelectedFiles( 
             /* [retval][out] */ IDispatch **result) = 0;
         
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnTest( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnTest( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnPost( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnPost( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnStateChanged( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnStateChanged( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Post( void) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Stop( void) = 0;
+        
     };
     
     
@@ -179,6 +201,36 @@ EXTERN_C const IID IID_IUploader;
             IUploader * This,
             /* [retval][out] */ IDispatch **result);
         
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnTest )( 
+            IUploader * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnTest )( 
+            IUploader * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnPost )( 
+            IUploader * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnPost )( 
+            IUploader * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnStateChanged )( 
+            IUploader * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnStateChanged )( 
+            IUploader * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Post )( 
+            IUploader * This);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
+            IUploader * This);
+        
         END_INTERFACE
     } IUploaderVtbl;
 
@@ -229,6 +281,30 @@ EXTERN_C const IID IID_IUploader;
 
 #define IUploader_GetSelectedFiles(This,result)	\
     ( (This)->lpVtbl -> GetSelectedFiles(This,result) ) 
+
+#define IUploader_get_OnTest(This,pVal)	\
+    ( (This)->lpVtbl -> get_OnTest(This,pVal) ) 
+
+#define IUploader_put_OnTest(This,newVal)	\
+    ( (This)->lpVtbl -> put_OnTest(This,newVal) ) 
+
+#define IUploader_get_OnPost(This,pVal)	\
+    ( (This)->lpVtbl -> get_OnPost(This,pVal) ) 
+
+#define IUploader_put_OnPost(This,newVal)	\
+    ( (This)->lpVtbl -> put_OnPost(This,newVal) ) 
+
+#define IUploader_get_OnStateChanged(This,pVal)	\
+    ( (This)->lpVtbl -> get_OnStateChanged(This,pVal) ) 
+
+#define IUploader_put_OnStateChanged(This,newVal)	\
+    ( (This)->lpVtbl -> put_OnStateChanged(This,newVal) ) 
+
+#define IUploader_Post(This)	\
+    ( (This)->lpVtbl -> Post(This) ) 
+
+#define IUploader_Stop(This)	\
+    ( (This)->lpVtbl -> Stop(This) ) 
 
 #endif /* COBJMACROS */
 
