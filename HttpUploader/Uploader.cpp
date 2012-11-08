@@ -4,6 +4,7 @@
 #include "Uploader.h"
 #include "JsArrayObject.h"
 #include "ult/file-dir.h"
+#include "ult/md5.h"
 
 #include <atlsafe.h>
 #include <commdlg.h>
@@ -223,5 +224,15 @@ HRESULT CUploader::OnStateChanged(int id, int state) {
     CComVariant result;
     InvokeMethod(on_state_changed_, param, 2, &result);
   }
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::GetMd5(BSTR file_name, BSTR* result)
+{
+  // TODO: Add your implementation code here
+  std::wstring filename(file_name, ::SysStringLen(file_name));
+  std::wstring md5 = ult::MD5File(filename);
+  Sleep(1000*5);
+  *result = ::SysAllocStringLen(md5.c_str(), md5.length());
   return S_OK;
 }

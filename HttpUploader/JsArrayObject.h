@@ -10,7 +10,9 @@ using namespace ATL;
 
 template<typename T, VARTYPE VT>
 class JsArrayObject : public IDispatch {
+
 public:
+
   JsArrayObject(void) {
     cref_ = 1;
   }
@@ -53,6 +55,7 @@ public:
     return E_NOTIMPL;
   }
 
+  //js can call these functions
   STDMETHODIMP GetIDsOfNames(REFIID riid, LPOLESTR *rgsz_names, UINT cnames,
       LCID lcid, DISPID *rgdispid) {
     if (wcscmp(rgsz_names[0], L"Size") == 0) {
@@ -86,7 +89,7 @@ public:
   }
 
   T At(size_t idx) const {
-    return array_.GetAr(idx);
+    return array_.GetAt(idx);
   }
 
   size_t Size(void) const {

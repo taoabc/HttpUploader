@@ -92,6 +92,7 @@ public:
   STDMETHOD(put_OnStateChanged)(IDispatch* newVal);
   STDMETHOD(Post)(void);
   STDMETHOD(Stop)(void);
+  STDMETHOD(GetMd5)(BSTR file_name, BSTR* result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)

@@ -20,8 +20,8 @@
         e.value = ""
       }
       function Test() {
-        Uploader.OnPost = OnPostFile;
-        Uploader.Test();
+        var md5 = Uploader.GetMd5("F:\\Software\\Driver\\RESOURCE_CD_DELL.iso");
+        alert(md5);
       }
       function OnPostFile(id, speed, posted, percent, lefttime) {
         AppendOutput("OnPost id:" + id + " speed:" + speed + " posted:"

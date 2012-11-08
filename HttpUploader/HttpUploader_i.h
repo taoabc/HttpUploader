@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Fri Nov 02 22:30:08 2012
+/* at Thu Nov 08 21:58:39 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
@@ -124,6 +124,10 @@ EXTERN_C const IID IID_IUploader;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Stop( void) = 0;
         
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetMd5( 
+            /* [in] */ BSTR file_name,
+            /* [retval][out] */ BSTR *result) = 0;
+        
     };
     
     
@@ -231,6 +235,11 @@ EXTERN_C const IID IID_IUploader;
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
             IUploader * This);
         
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetMd5 )( 
+            IUploader * This,
+            /* [in] */ BSTR file_name,
+            /* [retval][out] */ BSTR *result);
+        
         END_INTERFACE
     } IUploaderVtbl;
 
@@ -305,6 +314,9 @@ EXTERN_C const IID IID_IUploader;
 
 #define IUploader_Stop(This)	\
     ( (This)->lpVtbl -> Stop(This) ) 
+
+#define IUploader_GetMd5(This,file_name,result)	\
+    ( (This)->lpVtbl -> GetMd5(This,file_name,result) ) 
 
 #endif /* COBJMACROS */
 
