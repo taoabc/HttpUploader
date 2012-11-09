@@ -232,7 +232,6 @@ STDMETHODIMP CUploader::GetMd5(BSTR file_name, BSTR* result)
   // TODO: Add your implementation code here
   std::wstring filename(file_name, ::SysStringLen(file_name));
   std::wstring md5 = ult::MD5File(filename);
-  Sleep(1000*5);
   *result = ::SysAllocStringLen(md5.c_str(), md5.length());
   return S_OK;
 }

@@ -26,6 +26,7 @@ public:
   }
 
   bool Open(const std::wstring& filename, DWORD dwaccess = GENERIC_READ) {
+    Close();
     file_ = ::CreateFile(filename.c_str(), dwaccess, FILE_SHARE_READ, NULL,
       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (file_ == INVALID_HANDLE_VALUE) {
@@ -35,54 +36,44 @@ public:
     return true;
   }
 
-  bool MapFile(void) {
+  bool CreateMapping(void) {
     DWORD dwprotect;
-    DWORD dwview_access;
     if (dwaccess_ == GENERIC_READ) {
       dwprotect = PAGE_READONLY;
-      dwview_access = FILE_MAP_READ;
+      dwview_access_ = FILE_MAP_READ;
     } else if (dwaccess_ == (GENERIC_READ | GENERIC_WRITE)) {
       dwprotect = PAGE_READWRITE;
-      dwview_access = FILE_MAP_WRITE;
+      dwview_access_ = FILE_MAP_WRITE;
     } else if (dwaccess_ == (GENERIC_READ| GENERIC_EXECUTE)) {
       dwprotect = PAGE_EXECUTE_READ;
-      dwview_access = FILE_MAP_EXECUTE;
+      dwview_access_ = FILE_MAP_EXECUTE;
     } else if (dwaccess_ == (GENERIC_READ | GENERIC_WRITE | GENERIC_EXECUTE)) {
       dwprotect = PAGE_EXECUTE_READWRITE;
-      dwview_access = FILE_MAP_EXECUTE;
+      dwview_access_ = FILE_MAP_EXECUTE;
     }
     unsigned __int64 filesize = this->GetSize();
     if (filesize == 0) {
       return false;
     }
+    UnmapView();
+    CloseMapping();
     file_mapping_ = ::CreateFileMapping(file_, NULL, dwprotect, 0, 0, NULL);
     if (file_mapping_ == NULL) {
       return false;
     }
-    pfile_view_ = ::MapViewOfFile(file_mapping_, dwview_access, 0, 0, 0);
-    if (pfile_view_ == NULL) {
-      return false;
-    }
     return true;
   }
-
-  void Close(void) {
-    if (pfile_view_ != NULL) {
-      ::UnmapViewOfFile(pfile_view_);
-      pfile_view_ = NULL;
-    }
-    if (file_mapping_ != NULL) {
-      ::CloseHandle(file_mapping_);
-      file_mapping_ = NULL;
-    }
-    if (file_ != NULL) {
-      ::CloseHandle(file_);
-      file_ = NULL;
-    }
-  }
-
-  LPVOID GetMapView(void) {
+  
+  void* MapView(UINT64 offset, SIZE_T map_bytes) {
+    UnmapView();
+    pfile_view_ = ::MapViewOfFile(file_mapping_, dwview_access_, offset >> 32, offset & 0xffffffff, map_bytes);
     return pfile_view_;
+  }
+  
+  void Close(void) {
+    UnmapView();
+    CloseMapping();
+    CloseFile();
   }
 
   unsigned __int64 GetSize(void) {
@@ -96,7 +87,29 @@ public:
 
 private:
 
+  void UnmapView(void) {
+    if (pfile_view_ != NULL) {
+      ::UnmapViewOfFile(pfile_view_);
+      pfile_view_ = NULL;
+    }
+  }
+
+  void CloseMapping(void) {
+    if (file_mapping_ != NULL) {
+      ::CloseHandle(file_mapping_);
+      file_mapping_ = NULL;
+    }
+  }
+
+  void CloseFile(void) {
+    if (file_ != NULL) {
+      ::CloseHandle(file_);
+      file_ = NULL;
+    }
+  }
+
   DWORD dwaccess_;
+  DWORD dwview_access_;
   HANDLE file_;
   HANDLE file_mapping_;
   PVOID pfile_view_;
