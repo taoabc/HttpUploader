@@ -33,8 +33,20 @@ public:
 
   int Init(IAsyncWinHttpUploaderEvent* callback = NULL, DWORD chunk_size = 128 * 1024) {
     callback_ = callback;
-    chunk_size_ = chunk_size;
+    SetChunkSize(chunk_size);
     return Reset();
+  }
+
+  DWORD SetChunkSize(DWORD chunk_size) {
+    SYSTEM_INFO sys_info;
+    ::GetSystemInfo(&sys_info);
+    DWORD glt = sys_info.dwAllocationGranularity;
+    if (0xffffffff - glt < chunk_size) {
+      chunk_size_ = 0xffffffff - 0xffffffff%glt;
+    } else {
+      chunk_size_ = (chunk_size + glt-1) - (chunk_size + glt-1) % glt;
+    }
+    return chunk_size_;
   }
   
   int Reset(void) {
@@ -97,7 +109,7 @@ public:
       return ult::HttpStatus::kUnknownError;
     }
     file_cursor_ = start_position;
-    SetCallbackTotal(file_size_ - file_cursor_);
+    SetCallbackTotal(file_size_);
     size_t l1 = sendfield_.length();
     size_t l2 = post_begin_.length();
     size_t l3 = post_end_.length();
@@ -134,8 +146,7 @@ private:
     case StepFlag::SendBegin:
       WriteData(post_begin_.c_str(), post_begin_.length());
       flag_ = StepFlag::SendContent;
-      file_map_.MapFile();
-      file_view_ = file_map_.GetMapView();
+      file_map_.CreateMapping();
       break;
     case StepFlag::SendContent:
       {
@@ -150,8 +161,13 @@ private:
             tosend = left;
             flag_ = StepFlag::SendEnd;
           }
-          WriteData((char*)file_view_ + file_cursor_, tosend);
-          file_cursor_ += tosend;
+          LPVOID file_view = file_map_.MapView(file_cursor_, tosend);
+          if (file_view == NULL) {
+            SetCallbackStatus(ult::HttpStatus::kReadFileError);
+          } else {
+            WriteData(file_view, tosend);
+            file_cursor_ += tosend;
+          }
         }
       }
       break;
@@ -222,7 +238,6 @@ private:
   std::wstring wboundary_;
   DWORD file_size_;
   DWORD file_cursor_;
-  LPVOID file_view_;
 
   enum class StepFlag {
     SendField,
