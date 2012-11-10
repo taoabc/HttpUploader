@@ -27,11 +27,23 @@
         AppendOutput("OnPost id:" + id + " speed:" + speed + " posted:"
             + posted + " percent:" + percent + " lefttime:" + lefttime);
       }
+      function CalcAllFileMd5() {
+        var selected = Uploader.GetSelectedFiles();
+        for (var i = 0; i < selected.Size(); ++i) {
+          var file = selected.At(i);
+          AppendOutput("file name: " + file);
+          AppendOutput("md5: " + CalcMd5(file));
+        }
+      }
+      function CalcMd5(file) {
+        return Uploader.GetMd5(file);
+      }
     </script>
   </head>
   
   <body>
     <button OnClick="javascript:ShowDialog()" style="top:0;">ShowDialog</button>
+    <button OnClick="javascript:CalcAllFileMd5()">Calc All</button>
     <button OnClick="javascript:ClearOutput()" style="">ClearOutput</button>
     <button OnClick="javascript:Test()">Test</button>
     <p />

@@ -91,8 +91,8 @@ STDMETHODIMP CUploader::put_UrlPost(BSTR newVal) {
 STDMETHODIMP CUploader::GetSelectedFiles(IDispatch** result) {
   // TODO: Add your implementation code here
   JsArrayObject<BSTR, VT_BSTR>* p = new JsArrayObject<BSTR, VT_BSTR>;
-  for (size_t i = 0; i < selected_file_name_.GetCount(); ++i) {
-    p->PushBack(selected_file_name_.GetAt(i));
+  for (size_t i = 0; i < selected_file_path_.GetCount(); ++i) {
+    p->PushBack(selected_file_path_.GetAt(i));
   }
   *result = p;
   return S_OK;
@@ -124,7 +124,7 @@ bool CUploader::GetOpenFiles(HWND hwnd, std::vector<std::wstring>* pvec) {
   }
   while (*p != NULL) {
     std::wstring file_path(dir);
-    file_path += p;
+    ult::AppendPath(&file_path, p);
     pvec->push_back(file_path);
     p += wcslen(p) + 1;
   }
