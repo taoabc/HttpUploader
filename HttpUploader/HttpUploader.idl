@@ -28,7 +28,8 @@ interface IUploader : IDispatch{
   [propput, id(7), helpstring("state change callback")] HRESULT OnStateChanged([in] IDispatch* newVal);
   [id(8), helpstring("post file to http server")] HRESULT Post(void);
   [id(9), helpstring("stop upload")] HRESULT Stop(void);
-  [id(10), helpstring("calc file's md5")] HRESULT GetMd5([in] BSTR file_name, [out,retval] BSTR* result);
+  [id(10), helpstring("calc file's md5")] HRESULT CalcMd5([in] BSTR file_name, [out,retval] BSTR* result);
+  [id(11), helpstring("calculate file's md5 async")] HRESULT AsyncCalcMd5([in] BSTR file, [in] IDispatch* callback, [out,retval] LONG* result);
 };
 [
 	uuid(ED6FA5A2-ACE5-4A5B-8899-72711BF827FC),

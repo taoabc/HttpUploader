@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Sat Nov 10 10:18:51 2012
+/* at Tue Nov 13 17:31:39 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
@@ -124,9 +124,14 @@ EXTERN_C const IID IID_IUploader;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Stop( void) = 0;
         
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetMd5( 
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE CalcMd5( 
             /* [in] */ BSTR file_name,
             /* [retval][out] */ BSTR *result) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE AsyncCalcMd5( 
+            /* [in] */ BSTR file,
+            /* [in] */ IDispatch *callback,
+            /* [retval][out] */ LONG *result) = 0;
         
     };
     
@@ -235,10 +240,16 @@ EXTERN_C const IID IID_IUploader;
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
             IUploader * This);
         
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetMd5 )( 
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *CalcMd5 )( 
             IUploader * This,
             /* [in] */ BSTR file_name,
             /* [retval][out] */ BSTR *result);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *AsyncCalcMd5 )( 
+            IUploader * This,
+            /* [in] */ BSTR file,
+            /* [in] */ IDispatch *callback,
+            /* [retval][out] */ LONG *result);
         
         END_INTERFACE
     } IUploaderVtbl;
@@ -315,8 +326,11 @@ EXTERN_C const IID IID_IUploader;
 #define IUploader_Stop(This)	\
     ( (This)->lpVtbl -> Stop(This) ) 
 
-#define IUploader_GetMd5(This,file_name,result)	\
-    ( (This)->lpVtbl -> GetMd5(This,file_name,result) ) 
+#define IUploader_CalcMd5(This,file_name,result)	\
+    ( (This)->lpVtbl -> CalcMd5(This,file_name,result) ) 
+
+#define IUploader_AsyncCalcMd5(This,file,callback,result)	\
+    ( (This)->lpVtbl -> AsyncCalcMd5(This,file,callback,result) ) 
 
 #endif /* COBJMACROS */
 

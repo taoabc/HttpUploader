@@ -66,7 +66,15 @@ private:
   //project related
   HRESULT OnPost(int id, ULONGLONG speed, ULONGLONG posted, USHORT percent, UINT lefttime);
   HRESULT OnStateChanged(int id, int state);
+  static unsigned __stdcall AsyncCalcMd5Thread(void* pparam);
 
+  //type declare
+  struct CalcMd5Param {
+    std::wstring file;
+    IDispatch* disp;
+  };
+
+  //variable
   CComQIPtr<IWebBrowser2> pwebbrowser_;
   CComQIPtr<IHTMLDocument2> phtmldoc_;
   HWND hwnd_browser_;
@@ -92,7 +100,8 @@ public:
   STDMETHOD(put_OnStateChanged)(IDispatch* newVal);
   STDMETHOD(Post)(void);
   STDMETHOD(Stop)(void);
-  STDMETHOD(GetMd5)(BSTR file_name, BSTR* result);
+  STDMETHOD(CalcMd5)(BSTR file_name, BSTR* result);
+  STDMETHOD(AsyncCalcMd5)(BSTR file, IDispatch* callback, LONG* result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)

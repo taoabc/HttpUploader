@@ -212,7 +212,7 @@ HRESULT CUploader::OnPost(int id, ULONGLONG speed, ULONGLONG posted, USHORT perc
     param[4] = id;
     CComVariant result;
     InvokeMethod(on_post_, param, 5, &result);
-  } 
+  }
   return S_OK;
 }
 
@@ -227,11 +227,30 @@ HRESULT CUploader::OnStateChanged(int id, int state) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::GetMd5(BSTR file_name, BSTR* result)
-{
+unsigned __stdcall CUploader::AsyncCalcMd5Thread(void* pparam) {
+  //get and delete parameter
+  CalcMd5Param* param = (CalcMd5Param*)pparam;
+  const std::wstring file = param->file;
+  CComQIPtr<IDispatch> disp = param->disp;
+  delete param;
+  std::wstring md5 = ult::MD5File(file);
+
+  return 0;
+}
+
+STDMETHODIMP CUploader::CalcMd5(BSTR file_name, BSTR* result) {
   // TODO: Add your implementation code here
   std::wstring filename(file_name, ::SysStringLen(file_name));
   std::wstring md5 = ult::MD5File(filename);
   *result = ::SysAllocStringLen(md5.c_str(), md5.length());
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::AsyncCalcMd5(BSTR file, IDispatch* callback, LONG* result) {
+  // TODO: Add your implementation code here
+  CalcMd5Param* param = new CalcMd5Param;
+  param->file.assign(file, ::SysStringLen(file));
+  param->disp = callback;
+  CloseHandle((HANDLE)_beginthreadex(NULL, 0, AsyncCalcMd5Thread, param, 0, NULL));
   return S_OK;
 }

@@ -20,8 +20,12 @@
         e.value = ""
       }
       function Test() {
-        var md5 = Uploader.GetMd5("D:\\TDDOWNLOAD\\VS2012_ULT_enu.iso");
-        alert(md5);
+        Uploader.AsyncCalcMd5("D:\\TDDOWNLOAD\\QQ2012.exe",
+          function(file, md5) {
+            AppendOutput("file name: " + file);
+            AppendOutput("md5: " + md5);
+          }
+        );
       }
       function OnPostFile(id, speed, posted, percent, lefttime) {
         AppendOutput("OnPost id:" + id + " speed:" + speed + " posted:"
