@@ -5,6 +5,8 @@
 
 #include "HttpUploader_i.h"
 
+#include "MsgWnd.h"
+
 #include <atlctl.h>
 #include <atlcoll.h>
 #include <vector>
@@ -26,9 +28,10 @@ class ATL_NO_VTABLE CUploader :
 	  public IObjectWithSiteImpl<CUploader>,
 	  public IDispatchImpl<IUploader, &IID_IUploader, &LIBID_HttpUploaderLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
     public IObjectSafetyImpl<CUploader, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA> {
+
 public:
-	CUploader()	{
-	}
+
+  CUploader(void);
 
 DECLARE_REGISTRY_RESOURCEID(IDR_UPLOADER)
 
@@ -50,7 +53,6 @@ END_COM_MAP()
 	void FinalRelease() {
 	}
 
-public:
   // IObjectWithSite
   STDMETHOD(SetSite)(IUnknown* punksite);
 
@@ -66,13 +68,11 @@ private:
   //project related
   HRESULT OnPost(int id, ULONGLONG speed, ULONGLONG posted, USHORT percent, UINT lefttime);
   HRESULT OnStateChanged(int id, int state);
-  static unsigned __stdcall AsyncCalcMd5Thread(void* pparam);
+  void AsyncCalcMd5Thread(const std::wstring& file, IDispatch* disp);
 
   //type declare
-  struct CalcMd5Param {
-    std::wstring file;
-    IDispatch* disp;
-  };
+
+  friend class MsgWnd;
 
   //variable
   CComQIPtr<IWebBrowser2> pwebbrowser_;
@@ -84,6 +84,7 @@ private:
   CComQIPtr<IDispatch> ontest_;
   CComQIPtr<IDispatch> on_post_;
   CComQIPtr<IDispatch> on_state_changed_;
+  MsgWnd msgwnd_;
 
 public:
 

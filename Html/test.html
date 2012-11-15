@@ -19,13 +19,12 @@
         var e = document.getElementById("output");
         e.value = ""
       }
+      function Md5Getted(file, md5) {
+        AppendOutput("file name: " + file);
+        AppendOutput("md5: " + md5);
+      }
       function Test() {
-        Uploader.AsyncCalcMd5("D:\\TDDOWNLOAD\\QQ2012.exe",
-          function(file, md5) {
-            AppendOutput("file name: " + file);
-            AppendOutput("md5: " + md5);
-          }
-        );
+        
       }
       function OnPostFile(id, speed, posted, percent, lefttime) {
         AppendOutput("OnPost id:" + id + " speed:" + speed + " posted:"
@@ -35,12 +34,11 @@
         var selected = Uploader.GetSelectedFiles();
         for (var i = 0; i < selected.Size(); ++i) {
           var file = selected.At(i);
-          AppendOutput("file name: " + file);
-          AppendOutput("md5: " + CalcMd5(file));
+          AsyncCalcMd5(file);
         }
       }
-      function CalcMd5(file) {
-        return Uploader.GetMd5(file);
+      function AsyncCalcMd5(file) {
+        return Uploader.AsyncCalcMd5(file, Md5Getted);
       }
     </script>
   </head>

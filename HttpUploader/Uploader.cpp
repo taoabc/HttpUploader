@@ -10,7 +10,16 @@
 #include <commdlg.h>
 #include <ShlGuid.h>
 
+#include <memory>
+#include <thread>
+#include <functional>
+
 // CUploader
+
+CUploader::CUploader(void) {
+  msgwnd_.Create(HWND_MESSAGE);
+  msgwnd_.SetWindowLongPtr(GWLP_USERDATA, (LONG_PTR)this);
+}
 
 STDMETHODIMP CUploader::SetSite(IUnknown* punksite) {
   if (punksite != NULL) {
@@ -227,15 +236,14 @@ HRESULT CUploader::OnStateChanged(int id, int state) {
   return S_OK;
 }
 
-unsigned __stdcall CUploader::AsyncCalcMd5Thread(void* pparam) {
+void CUploader::AsyncCalcMd5Thread(const std::wstring& file, IDispatch* disp) {
   //get and delete parameter
-  CalcMd5Param* param = (CalcMd5Param*)pparam;
-  const std::wstring file = param->file;
-  CComQIPtr<IDispatch> disp = param->disp;
-  delete param;
   std::wstring md5 = ult::MD5File(file);
-
-  return 0;
+  Md5GettedParam* p = new Md5GettedParam;
+  p->disp = disp;
+  p->file = file;
+  p->md5 = md5;
+  msgwnd_.PostMessage(UM_MD5GETTED, (WPARAM)p);
 }
 
 STDMETHODIMP CUploader::CalcMd5(BSTR file_name, BSTR* result) {
@@ -248,9 +256,8 @@ STDMETHODIMP CUploader::CalcMd5(BSTR file_name, BSTR* result) {
 
 STDMETHODIMP CUploader::AsyncCalcMd5(BSTR file, IDispatch* callback, LONG* result) {
   // TODO: Add your implementation code here
-  CalcMd5Param* param = new CalcMd5Param;
-  param->file.assign(file, ::SysStringLen(file));
-  param->disp = callback;
-  CloseHandle((HANDLE)_beginthreadex(NULL, 0, AsyncCalcMd5Thread, param, 0, NULL));
+  std::wstring wfile(file, ::SysStringLen(file));
+  std::thread t(std::bind(&CUploader::AsyncCalcMd5Thread, this, wfile, callback));
+  t.detach();
   return S_OK;
 }
