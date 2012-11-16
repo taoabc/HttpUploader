@@ -19,6 +19,7 @@ LRESULT MsgWnd::OnCalcMd5(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled)
   callback_param[1] = param->file.c_str();
   CComVariant result;
   uploader->InvokeMethod(param->disp, callback_param, 2, &result);
+  param->disp->Release();
   return 0;
 }
 

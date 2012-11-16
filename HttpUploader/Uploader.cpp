@@ -43,31 +43,6 @@ STDMETHODIMP CUploader::SetSite(IUnknown* punksite) {
 
 
 STDMETHODIMP CUploader::Test(LONG* result) {
-  // TODO: Add your implementation code here
-  /*CComQIPtr<IDispatch> pscript;
-  phtmldoc_->get_Script(&pscript);
-  CComBSTR func_name(L"JsTest");
-  DISPID dispid;
-  HRESULT hr = pscript->GetIDsOfNames(IID_NULL, &func_name, 1, LOCALE_SYSTEM_DEFAULT, &dispid);
-  if (SUCCEEDED(hr)) {
-    DISPPARAMS dispparams;
-    memset(&dispparams, 0, sizeof (dispparams));
-    dispparams.cArgs = 3;
-    CComVariant va_param[3] = {23, L"asdf", L";lkj"};
-    dispparams.rgvarg = va_param;
-    dispparams.cNamedArgs = 0;
-    CComVariant va_result;
-    UINT arrerr = -1;
-    hr = pscript->Invoke(dispid, IID_NULL, 0, DISPATCH_METHOD, &dispparams, &va_result, NULL, &arrerr);
-  }
-  *result = 555;*/
-  /*if (ontest_ != NULL) {
-    DISPPARAMS dispparams;
-    memset(&dispparams, 0, sizeof (dispparams));
-    CComVariant va_result;
-    ontest_->Invoke(0, IID_NULL, LOCALE_SYSTEM_DEFAULT, DISPATCH_METHOD, &dispparams, &va_result, NULL, NULL);
-  }*/
-  OnPost(1, 23, 235235, 45, 2636);
   return S_OK;
 }
 
@@ -294,6 +269,8 @@ STDMETHODIMP CUploader::CalcMd5(BSTR file_name, BSTR* result) {
 STDMETHODIMP CUploader::AsyncCalcMd5(BSTR file, IDispatch* callback, LONG* result) {
   // TODO: Add your implementation code here
   std::wstring wfile(file, ::SysStringLen(file));
+  //important to AddRef
+  callback->AddRef();
   std::thread t(std::bind(&CUploader::AsyncCalcMd5Thread, this, wfile, callback));
   t.detach();
   *result = 0;
