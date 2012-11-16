@@ -24,7 +24,7 @@
         AppendOutput("md5: " + md5);
       }
       function Test() {
-        
+        Uploader.PostFile("D:\\TDDOWNLOAD\\BCompare-3.3.4.14431.exe");
       }
       function OnPostFile(id, speed, posted, percent, lefttime) {
         AppendOutput("OnPost id:" + id + " speed:" + speed + " posted:"
@@ -34,11 +34,15 @@
         var selected = Uploader.GetSelectedFiles();
         for (var i = 0; i < selected.Size(); ++i) {
           var file = selected.At(i);
-          AsyncCalcMd5(file);
+          Uploader.AsyncCalcMd5(file, Md5Getted);
         }
       }
-      function AsyncCalcMd5(file) {
-        return Uploader.AsyncCalcMd5(file, Md5Getted);
+      function PostAllFile() {
+        var selected = Uploader.GetSelectedFiles();
+        for (var i = 0; i < selected.Size(); ++i) {
+          var file = selected.At(i);
+          Uploader.PostFile(file);
+        }
       }
     </script>
   </head>
@@ -46,6 +50,7 @@
   <body>
     <button OnClick="javascript:ShowDialog()" style="top:0;">ShowDialog</button>
     <button OnClick="javascript:CalcAllFileMd5()">Calc All</button>
+    <button Onclick="javascript:PostAllFile()">Post All</button>
     <button OnClick="javascript:ClearOutput()" style="">ClearOutput</button>
     <button OnClick="javascript:Test()">Test</button>
     <p />

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Thu Nov 15 10:46:35 2012
+/* at Fri Nov 16 15:34:03 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
@@ -133,6 +133,10 @@ EXTERN_C const IID IID_IUploader;
             /* [in] */ IDispatch *callback,
             /* [retval][out] */ LONG *result) = 0;
         
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PostFile( 
+            /* [in] */ BSTR file,
+            /* [retval][out] */ LONG *result) = 0;
+        
     };
     
     
@@ -251,6 +255,11 @@ EXTERN_C const IID IID_IUploader;
             /* [in] */ IDispatch *callback,
             /* [retval][out] */ LONG *result);
         
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *PostFile )( 
+            IUploader * This,
+            /* [in] */ BSTR file,
+            /* [retval][out] */ LONG *result);
+        
         END_INTERFACE
     } IUploaderVtbl;
 
@@ -331,6 +340,9 @@ EXTERN_C const IID IID_IUploader;
 
 #define IUploader_AsyncCalcMd5(This,file,callback,result)	\
     ( (This)->lpVtbl -> AsyncCalcMd5(This,file,callback,result) ) 
+
+#define IUploader_PostFile(This,file,result)	\
+    ( (This)->lpVtbl -> PostFile(This,file,result) ) 
 
 #endif /* COBJMACROS */
 

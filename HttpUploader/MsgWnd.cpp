@@ -8,6 +8,7 @@ MsgWnd::MsgWnd(void) {
 }
 
 MsgWnd::~MsgWnd(void) {
+  DestroyWindow();
 }
 
 LRESULT MsgWnd::OnCalcMd5(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled) {

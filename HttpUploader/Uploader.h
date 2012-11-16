@@ -7,6 +7,8 @@
 
 #include "MsgWnd.h"
 
+#include "WinhttpUploader.h"
+
 #include <atlctl.h>
 #include <atlcoll.h>
 #include <vector>
@@ -69,6 +71,7 @@ private:
   HRESULT OnPost(int id, ULONGLONG speed, ULONGLONG posted, USHORT percent, UINT lefttime);
   HRESULT OnStateChanged(int id, int state);
   void AsyncCalcMd5Thread(const std::wstring& file, IDispatch* disp);
+  void UploadFileThread(const std::wstring& file, const std::wstring& md5, DWORD startpos);
 
   //type declare
 
@@ -103,6 +106,7 @@ public:
   STDMETHOD(Stop)(void);
   STDMETHOD(CalcMd5)(BSTR file_name, BSTR* result);
   STDMETHOD(AsyncCalcMd5)(BSTR file, IDispatch* callback, LONG* result);
+  STDMETHOD(PostFile)(BSTR file, LONG* result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)

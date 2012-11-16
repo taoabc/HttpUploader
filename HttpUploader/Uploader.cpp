@@ -5,6 +5,7 @@
 #include "JsArrayObject.h"
 #include "ult/file-dir.h"
 #include "ult/md5.h"
+#include "ult/file-io.h"
 
 #include <atlsafe.h>
 #include <commdlg.h>
@@ -13,6 +14,7 @@
 #include <memory>
 #include <thread>
 #include <functional>
+#include <algorithm>
 
 // CUploader
 
@@ -246,6 +248,41 @@ void CUploader::AsyncCalcMd5Thread(const std::wstring& file, IDispatch* disp) {
   msgwnd_.PostMessage(UM_MD5GETTED, (WPARAM)p);
 }
 
+void CUploader::UploadFileThread(const std::wstring& file, const std::wstring& md5, DWORD startpos) {
+  WinhttpUploader uploader;
+  std::string md5a = ult::UnicodeToAnsi(md5);
+  uploader.AddField(L"md5", md5a.c_str(), md5a.length());
+  ult::File f;
+  if (!f.Open(file)) {
+    return;
+  }
+  std::wstring dir, name;
+  ult::ToUpperpathAndFilename(file, L"\\", &dir, &name);
+  UINT64 filesize = f.GetSize();
+  if (startpos >= filesize) {
+    return;
+  }
+  UINT64 t = filesize - startpos;
+  if (t > 0xfffff000) {
+    return;
+  }
+  DWORD sendsize = (DWORD)t;
+  uploader.BeginPost(L"http://192.168.200.168/upload/upload.php", name, sendsize);
+  DWORD buf_len = 128 * 1024; // set buffer 128K
+  std::shared_ptr<char> buffer(new char[buf_len]);
+  DWORD cursor = startpos;
+  DWORD write, readed;;
+  while (cursor < sendsize) {
+    write = min(sendsize-cursor, buf_len);
+    f.Read(buffer.get(), write, &readed);
+    if (readed != write) {
+    }
+    uploader.WriteData(buffer.get(), readed);
+    cursor += write;
+  }
+  uploader.EndPost();
+}
+
 STDMETHODIMP CUploader::CalcMd5(BSTR file_name, BSTR* result) {
   // TODO: Add your implementation code here
   std::wstring filename(file_name, ::SysStringLen(file_name));
@@ -259,5 +296,15 @@ STDMETHODIMP CUploader::AsyncCalcMd5(BSTR file, IDispatch* callback, LONG* resul
   std::wstring wfile(file, ::SysStringLen(file));
   std::thread t(std::bind(&CUploader::AsyncCalcMd5Thread, this, wfile, callback));
   t.detach();
+  *result = 0;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::PostFile(BSTR file, LONG* result) {
+  // TODO: Add your implementation code here
+  std::wstring wfile(file, ::SysStringLen(file));
+  std::thread t(std::bind(&CUploader::UploadFileThread, this, wfile, L"", 0));
+  t.detach();
+  *result = 0;
   return S_OK;
 }

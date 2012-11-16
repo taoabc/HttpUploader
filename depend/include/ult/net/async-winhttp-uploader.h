@@ -18,7 +18,7 @@ namespace ult {
 struct IAsyncWinHttpUploaderEvent {
   virtual void SetTotal(DWORD total) = 0;
   virtual void SetCompleted(DWORD complated) = 0;
-  virtual void SetStatus(DWORD status) = 0;
+  virtual void SetStatus(int status) = 0;
 };
 
 class AsyncWinHttpUploader : public ult::AsyncWinHttpRequest {
