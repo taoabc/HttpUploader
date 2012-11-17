@@ -170,7 +170,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
     <None Include="HttpUploader.def" />
     <None Include="HttpUploader.rgs" />
     <None Include="Uploader.rgs" />
