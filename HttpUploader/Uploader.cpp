@@ -6,6 +6,7 @@
 #include "ult/file-dir.h"
 #include "ult/md5.h"
 #include "ult/file-io.h"
+#include "ult/number.h"
 
 #include <atlsafe.h>
 #include <commdlg.h>
@@ -118,18 +119,6 @@ bool CUploader::GetOpenFiles(HWND hwnd, std::vector<std::wstring>* pvec) {
   return true;
 }
 
-STDMETHODIMP CUploader::get_OnTest(IDispatch** pVal) {
-  // TODO: Add your implementation code here
-  *pVal = ontest_;
-  return S_OK;
-}
-
-STDMETHODIMP CUploader::put_OnTest(IDispatch* newVal) {
-  // TODO: Add your implementation code here
-  ontest_ = newVal;
-  return S_OK;
-}
-
 STDMETHODIMP CUploader::get_OnPost(IDispatch** pVal) {
   // TODO: Add your implementation code here
   *pVal = on_post_;
@@ -154,15 +143,9 @@ STDMETHODIMP CUploader::put_OnStateChanged(IDispatch* newVal) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::Post(void) {
+STDMETHODIMP CUploader::Stop(ULONG id) {
   // TODO: Add your implementation code here
-
-  return S_OK;
-}
-
-STDMETHODIMP CUploader::Stop(void) {
-  // TODO: Add your implementation code here
-
+  stop_map_[id] = true;
   return S_OK;
 }
 
@@ -188,47 +171,58 @@ DISPID CUploader::FindId(IDispatch* disp, LPOLESTR name) {
   return id;
 }
 
-HRESULT CUploader::OnPost(int id, ULONGLONG speed, ULONGLONG posted, USHORT percent, UINT lefttime) {
+HRESULT CUploader::OnPost(ULONG id, ULONGLONG speed, ULONGLONG posted, USHORT percent) {
   if (on_post_ != NULL) {
-    CComVariant param[5];
-    param[0] = lefttime;
-    param[1] = percent;
-    param[2] = posted;
-    param[3] = speed;
-    param[4] = id;
+    CComVariant param[4];
+    param[0] = percent;
+    param[1] = posted;
+    param[2] = speed;
+    param[3] = id;
     CComVariant result;
-    InvokeMethod(on_post_, param, 5, &result);
+    return InvokeMethod(on_post_, param, 4, &result);
   }
   return S_OK;
 }
 
-HRESULT CUploader::OnStateChanged(int id, int state) {
+HRESULT CUploader::OnStateChanged(ULONG id, LONG state) {
   if (on_state_changed_ != NULL) {
     CComVariant param[2];
     param[0] = state;
     param[1] = id;
     CComVariant result;
-    InvokeMethod(on_state_changed_, param, 2, &result);
+    return InvokeMethod(on_state_changed_, param, 2, &result);
   }
   return S_OK;
 }
 
-void CUploader::AsyncCalcMd5Thread(const std::wstring& file, IDispatch* disp) {
+HRESULT CUploader::OnMd5Getted(ULONG id, const std::wstring& md5) {
+  if (on_md5_getted_ != NULL) {
+    CComVariant param[2];
+    param[0] = md5.c_str();
+    param[1] = id;
+    CComVariant result;
+    return InvokeMethod(on_md5_getted_, param, 2, &result);
+  }
+  return S_OK;
+}
+
+void CUploader::AsyncCalcMd5Thread(ULONG id, const std::wstring& file) {
   //get and delete parameter
   std::wstring md5 = ult::MD5File(file);
   Md5GettedParam* p = new Md5GettedParam;
-  p->disp = disp;
-  p->file = file;
+  p->id = id;
   p->md5 = md5;
+  //use message to turn call main thread to handle this
   msgwnd_.PostMessage(UM_MD5GETTED, (WPARAM)p);
 }
 
-void CUploader::UploadFileThread(const std::wstring& file, const std::wstring& md5, DWORD startpos) {
+void CUploader::UploadFileThread(ULONG id, const std::wstring& file, const std::wstring& md5, DWORD startpos) {
   WinhttpUploader uploader;
   std::string md5a = ult::UnicodeToAnsi(md5);
   uploader.AddField(L"md5", md5a.c_str(), md5a.length());
   ult::File f;
   if (!f.Open(file)) {
+    PostMessageStateChanged(id, kUnknownError);
     return;
   }
   std::wstring dir, name;
@@ -239,23 +233,64 @@ void CUploader::UploadFileThread(const std::wstring& file, const std::wstring& m
   }
   UINT64 t = filesize - startpos;
   if (t > 0xfffff000) {
+    PostMessageStateChanged(id, kUnknownError);
     return;
   }
   DWORD sendsize = (DWORD)t;
-  uploader.BeginPost(L"http://192.168.200.168/upload/upload.php", name, sendsize);
+  uploader.BeginPost(std::wstring(post_url_, post_url_.Length()), name, sendsize);
   DWORD buf_len = 128 * 1024; // set buffer 128K
   std::shared_ptr<char> buffer(new char[buf_len]);
   DWORD cursor = startpos;
-  DWORD write, readed;;
-  while (cursor < sendsize) {
-    write = min(sendsize-cursor, buf_len);
+  DWORD write, readed;
+  DWORD oldtk = ::GetTickCount();
+  DWORD oldcursor = cursor;
+  DWORD newtk;
+  ULONGLONG speed;
+  stop_map_[id] = false;
+  PostMessageStateChanged(id, kBeginPost);
+  while (cursor < filesize) {
+    if (stop_map_[id]) {
+      PostMessageStateChanged(id, kStopPost);
+      return;
+    }
+    write = min(filesize-cursor, buf_len);
     f.Read(buffer.get(), write, &readed);
     if (readed != write) {
+      PostMessageStateChanged(id, kUnknownError);
+      return;
     }
     uploader.WriteData(buffer.get(), readed);
     cursor += write;
+    newtk = ::GetTickCount();
+    //如果小于1S，不计算速度
+    if (newtk - oldtk < 1000) {
+      continue;
+    }
+    speed = (ULONGLONG)(cursor - oldcursor) * 1000 / (newtk - oldtk);
+    USHORT percent = (USHORT)ult::UIntMultDiv(cursor, 100, filesize);
+    PostMessagePost(id, speed, cursor, percent);
+    oldtk = newtk;
+    oldcursor = cursor;
   }
   uploader.EndPost();
+  PostMessagePost(id, 0, filesize, 100);
+  PostMessageStateChanged(id, kPostSuccess);
+}
+
+void CUploader::PostMessagePost(ULONG id, ULONGLONG speed, ULONGLONG posted, USHORT percent) {
+  PostParam* p = new PostParam;
+  p->id = id;
+  p->speed = speed;
+  p->posted = posted;
+  p->percent = percent;
+  msgwnd_.PostMessage(UM_POST, (WPARAM)p);
+}
+
+void CUploader::PostMessageStateChanged(ULONG id, LONG state) {
+  StateChangedParam* scp= new StateChangedParam;
+  scp->id = 0;
+  scp->state = state;
+  msgwnd_.PostMessage(UM_STATECHANGED, (WPARAM)scp);
 }
 
 STDMETHODIMP CUploader::CalcMd5(BSTR file_name, BSTR* result) {
@@ -266,21 +301,50 @@ STDMETHODIMP CUploader::CalcMd5(BSTR file_name, BSTR* result) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::AsyncCalcMd5(BSTR file, IDispatch* callback, LONG* result) {
+STDMETHODIMP CUploader::AsyncCalcMd5(ULONG id, BSTR file, LONG* result) {
   // TODO: Add your implementation code here
   std::wstring wfile(file, ::SysStringLen(file));
-  //important to AddRef
-  callback->AddRef();
-  std::thread t(std::bind(&CUploader::AsyncCalcMd5Thread, this, wfile, callback));
+  std::thread t(std::bind(&CUploader::AsyncCalcMd5Thread, this, id, wfile));
   t.detach();
   *result = 0;
   return S_OK;
 }
 
-STDMETHODIMP CUploader::PostFile(BSTR file, LONG* result) {
+STDMETHODIMP CUploader::PostFile(ULONG id, BSTR file, LONG* result) {
   // TODO: Add your implementation code here
+  //确保url被设置
+  if (post_url_.Length() == 0) {
+    *result = -1;
+    return S_OK;
+  }
   std::wstring wfile(file, ::SysStringLen(file));
-  std::thread t(std::bind(&CUploader::UploadFileThread, this, wfile, L"", 0));
+  std::thread t(std::bind(&CUploader::UploadFileThread, this, id, wfile, L"", 0));
+  t.detach();
+  *result = 0;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::get_OnMd5Getted(IDispatch** pVal) {
+  // TODO: Add your implementation code here
+  *pVal = on_md5_getted_;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::put_OnMd5Getted(IDispatch* newVal) {
+  // TODO: Add your implementation code here
+  on_md5_getted_ = newVal;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::PostResumeFile(ULONG id, BSTR file, BSTR md5, ULONGLONG startpos, LONG* result) {
+  // TODO: Add your implementation code here
+  if (post_url_.Length() == 0) {
+    *result = -1;
+    return S_OK;
+  }
+  std::wstring wfile(file, ::SysStringLen(file));
+  std::thread t(std::bind(&CUploader::UploadFileThread, this, id, wfile,
+      std::wstring(md5, ::SysStringLen(md5)), startpos));
   t.detach();
   *result = 0;
   return S_OK;

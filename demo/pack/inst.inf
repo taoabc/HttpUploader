@@ -1,0 +1,13 @@
+[version]
+signature="$CHICAGO$"
+AdvancedINF=2.0
+
+[Add.Code]
+HttpUploader.dll=HttpUploader.dll
+
+[HttpUploader.dll]
+file=thiscab
+clsid={3F31A1AB-6A27-4459-B9D8-C8C459F1F30D}
+FileVersion=1,0,0,1
+RegisterServer=yes
+DestDir=

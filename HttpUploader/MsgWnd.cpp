@@ -11,18 +11,27 @@ MsgWnd::~MsgWnd(void) {
   DestroyWindow();
 }
 
+CUploader* MsgWnd::GetUploader(void) {
+  return (CUploader*)GetWindowLongPtr(GWLP_USERDATA);
+}
+
 LRESULT MsgWnd::OnCalcMd5(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled) {
-  CUploader* uploader = GetUploader();
   std::shared_ptr<Md5GettedParam> param((Md5GettedParam*)wparam);
-  CComVariant callback_param[2];
-  callback_param[0] = param->md5.c_str();
-  callback_param[1] = param->file.c_str();
-  CComVariant result;
-  uploader->InvokeMethod(param->disp, callback_param, 2, &result);
-  param->disp->Release();
+  CUploader* uploader = GetUploader();
+  uploader->OnMd5Getted(param->id, param->md5);
   return 0;
 }
 
-CUploader* MsgWnd::GetUploader(void) {
-  return (CUploader*)GetWindowLongPtr(GWLP_USERDATA);
+LRESULT MsgWnd::OnPost(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled) {
+  std::shared_ptr<PostParam> param((PostParam*)wparam);
+  CUploader* uploader = GetUploader();
+  uploader->OnPost(param->id, param->speed, param->posted, param->percent);
+  return 0;
+}
+
+LRESULT MsgWnd::OnStateChanged(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled) {
+  std::shared_ptr<StateChangedParam> param((StateChangedParam*)wparam);
+  CUploader* uploader = GetUploader();
+  uploader->OnStateChanged(param->id, param->state);
+  return 0;
 }

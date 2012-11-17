@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Fri Nov 16 22:45:45 2012
+/* at Sat Nov 17 22:11:27 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
@@ -102,12 +102,6 @@ EXTERN_C const IID IID_IUploader;
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetSelectedFiles( 
             /* [retval][out] */ IDispatch **result) = 0;
         
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnTest( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnTest( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnPost( 
             /* [retval][out] */ IDispatch **pVal) = 0;
         
@@ -120,21 +114,34 @@ EXTERN_C const IID IID_IUploader;
         virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnStateChanged( 
             /* [in] */ IDispatch *newVal) = 0;
         
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Post( void) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Stop( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Stop( 
+            /* [in] */ ULONG id) = 0;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE CalcMd5( 
             /* [in] */ BSTR file_name,
             /* [retval][out] */ BSTR *result) = 0;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE AsyncCalcMd5( 
+            /* [in] */ ULONG id,
             /* [in] */ BSTR file,
-            /* [in] */ IDispatch *callback,
             /* [retval][out] */ LONG *result) = 0;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PostFile( 
+            /* [in] */ ULONG id,
             /* [in] */ BSTR file,
+            /* [retval][out] */ LONG *result) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnMd5Getted( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnMd5Getted( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PostResumeFile( 
+            /* [in] */ ULONG id,
+            /* [in] */ BSTR file,
+            /* [in] */ BSTR md5,
+            /* [in] */ ULONGLONG startpos,
             /* [retval][out] */ LONG *result) = 0;
         
     };
@@ -214,14 +221,6 @@ EXTERN_C const IID IID_IUploader;
             IUploader * This,
             /* [retval][out] */ IDispatch **result);
         
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnTest )( 
-            IUploader * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnTest )( 
-            IUploader * This,
-            /* [in] */ IDispatch *newVal);
-        
         /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnPost )( 
             IUploader * This,
             /* [retval][out] */ IDispatch **pVal);
@@ -238,11 +237,9 @@ EXTERN_C const IID IID_IUploader;
             IUploader * This,
             /* [in] */ IDispatch *newVal);
         
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Post )( 
-            IUploader * This);
-        
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
-            IUploader * This);
+            IUploader * This,
+            /* [in] */ ULONG id);
         
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *CalcMd5 )( 
             IUploader * This,
@@ -251,13 +248,30 @@ EXTERN_C const IID IID_IUploader;
         
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *AsyncCalcMd5 )( 
             IUploader * This,
+            /* [in] */ ULONG id,
             /* [in] */ BSTR file,
-            /* [in] */ IDispatch *callback,
             /* [retval][out] */ LONG *result);
         
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *PostFile )( 
             IUploader * This,
+            /* [in] */ ULONG id,
             /* [in] */ BSTR file,
+            /* [retval][out] */ LONG *result);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnMd5Getted )( 
+            IUploader * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnMd5Getted )( 
+            IUploader * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *PostResumeFile )( 
+            IUploader * This,
+            /* [in] */ ULONG id,
+            /* [in] */ BSTR file,
+            /* [in] */ BSTR md5,
+            /* [in] */ ULONGLONG startpos,
             /* [retval][out] */ LONG *result);
         
         END_INTERFACE
@@ -311,12 +325,6 @@ EXTERN_C const IID IID_IUploader;
 #define IUploader_GetSelectedFiles(This,result)	\
     ( (This)->lpVtbl -> GetSelectedFiles(This,result) ) 
 
-#define IUploader_get_OnTest(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnTest(This,pVal) ) 
-
-#define IUploader_put_OnTest(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnTest(This,newVal) ) 
-
 #define IUploader_get_OnPost(This,pVal)	\
     ( (This)->lpVtbl -> get_OnPost(This,pVal) ) 
 
@@ -329,20 +337,26 @@ EXTERN_C const IID IID_IUploader;
 #define IUploader_put_OnStateChanged(This,newVal)	\
     ( (This)->lpVtbl -> put_OnStateChanged(This,newVal) ) 
 
-#define IUploader_Post(This)	\
-    ( (This)->lpVtbl -> Post(This) ) 
-
-#define IUploader_Stop(This)	\
-    ( (This)->lpVtbl -> Stop(This) ) 
+#define IUploader_Stop(This,id)	\
+    ( (This)->lpVtbl -> Stop(This,id) ) 
 
 #define IUploader_CalcMd5(This,file_name,result)	\
     ( (This)->lpVtbl -> CalcMd5(This,file_name,result) ) 
 
-#define IUploader_AsyncCalcMd5(This,file,callback,result)	\
-    ( (This)->lpVtbl -> AsyncCalcMd5(This,file,callback,result) ) 
+#define IUploader_AsyncCalcMd5(This,id,file,result)	\
+    ( (This)->lpVtbl -> AsyncCalcMd5(This,id,file,result) ) 
 
-#define IUploader_PostFile(This,file,result)	\
-    ( (This)->lpVtbl -> PostFile(This,file,result) ) 
+#define IUploader_PostFile(This,id,file,result)	\
+    ( (This)->lpVtbl -> PostFile(This,id,file,result) ) 
+
+#define IUploader_get_OnMd5Getted(This,pVal)	\
+    ( (This)->lpVtbl -> get_OnMd5Getted(This,pVal) ) 
+
+#define IUploader_put_OnMd5Getted(This,newVal)	\
+    ( (This)->lpVtbl -> put_OnMd5Getted(This,newVal) ) 
+
+#define IUploader_PostResumeFile(This,id,file,md5,startpos,result)	\
+    ( (This)->lpVtbl -> PostResumeFile(This,id,file,md5,startpos,result) ) 
 
 #endif /* COBJMACROS */
 

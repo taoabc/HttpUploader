@@ -2,8 +2,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>plugin test</title>
-    <object id="Uploader" classid="clsid:3F31A1AB-6A27-4459-B9D8-C8C459F1F30D"></object>
+    <object id="Uploader" classid="clsid:3F31A1AB-6A27-4459-B9D8-C8C459F1F30D" codebase="http://127.0.0.1/uploader/pack.cab#version=1,0,0,1"></object>
     <script type="text/javascript">
+      var g_filename;
       function AppendOutput(txt) {
         var e = document.getElementById("output");
         e.value = e.value + "\n" + txt;
@@ -19,38 +20,63 @@
         var e = document.getElementById("output");
         e.value = ""
       }
-      function Md5Getted(file, md5) {
-        AppendOutput("file name: " + file);
+      function Md5Getted(id, md5) {
+        AppendOutput("file id: " + id);
         AppendOutput("md5: " + md5);
+        if (id == 999) {
+          Uploader.PostResumeFile(999, g_filename, md5, 10000);
+        }
       }
       function Test() {
-        Uploader.Test();
       }
-      function OnPostFile(id, speed, posted, percent, lefttime) {
+      function OnPostFile(id, speed, posted, percent) {
         AppendOutput("OnPost id:" + id + " speed:" + speed + " posted:"
-            + posted + " percent:" + percent + " lefttime:" + lefttime);
+            + posted + " percent:" + percent);
       }
       function CalcAllFileMd5() {
         var selected = Uploader.GetSelectedFiles();
         for (var i = 0; i < selected.Size(); ++i) {
           var file = selected.At(i);
-          Uploader.AsyncCalcMd5(file, Md5Getted);
+          Uploader.AsyncCalcMd5(i, file);
         }
       }
       function PostAllFile() {
         var selected = Uploader.GetSelectedFiles();
         for (var i = 0; i < selected.Size(); ++i) {
           var file = selected.At(i);
-          Uploader.PostFile(file);
+          Uploader.PostFile(i, file);
+        }
+      }
+      function OnStateChanged(id, state) {
+        AppendOutput("OnStateChanged id:" + id + " state:" + state);
+      }
+      function InitPlugin() {
+        Uploader.OnMd5Getted = Md5Getted;
+        Uploader.OnPost = OnPostFile;
+        Uploader.OnStateChanged = OnStateChanged;
+        Uploader.UrlPost = "http://127.0.0.1/uploader/upload.php";
+      }
+      function StopPost() {
+        Uploader.Stop(0);
+      }
+      function PostResumeFile() {
+        var selected = Uploader.GetSelectedFiles();
+        if (selected.Size() > 0) {
+          var file = selected.At(0);
+          var testid = 999;
+          g_filename = file;
+          Uploader.AsyncCalcMd5(999, file);
         }
       }
     </script>
   </head>
   
-  <body>
+  <body onload="javascript:InitPlugin()">
     <button OnClick="javascript:ShowDialog()" style="top:0;">ShowDialog</button>
     <button OnClick="javascript:CalcAllFileMd5()">Calc All</button>
     <button Onclick="javascript:PostAllFile()">Post All</button>
+    <button OnClick="javascript:StopPost()">Stop Post</button>
+    <button OnClick="javascript:PostResumeFile()">Post Resume File</button>
     <button OnClick="javascript:ClearOutput()" style="">ClearOutput</button>
     <button OnClick="javascript:Test()">Test</button>
     <p />

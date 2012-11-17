@@ -97,6 +97,7 @@
     <None Include="Uploader.rgs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="HttpUploader.idl">

@@ -1,0 +1,1 @@
+MAKECAB /D CompressionType=LZX /D CompressionMemory=21 /D MaxDiskSize=1073741824 /D Cabinet=On /D Compress=On /D DiskDirectoryTemplate="cab" /D CabinetNameTemplate="%~n0.cab" /V1 /F pack.ddf
