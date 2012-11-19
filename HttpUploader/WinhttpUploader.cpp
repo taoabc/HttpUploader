@@ -76,12 +76,21 @@ int WinhttpUploader::BeginPost(const std::wstring& url, const std::wstring& file
   size_t l3 = postend_.length();
   UINT64 total_size = sendsize + sendfield_.length() + postbegin.length() + postend_.length();
   total_size = total_size > 0xffffffff ? 0xffffffff : total_size;
-  SendRequest(header.c_str(), -1L, NULL, 0, (DWORD)total_size);
-  
-  if (sendfield_.length() > 0) {
-    WriteData(sendfield_.c_str(), sendfield_.length());
+  HRESULT hr;
+  hr = SendRequest(header.c_str(), -1L, NULL, 0, (DWORD)total_size);
+  if (FAILED(hr)) {
+    return ult::HttpStatus::kSendRequestError;
   }
-  WriteData(postbegin.c_str(), postbegin.length());
+  if (sendfield_.length() > 0) {
+    hr = WriteData(sendfield_.c_str(), sendfield_.length());
+    if (FAILED(hr)) {
+      return ult::HttpStatus::kUnknownError;
+    }
+  }
+  hr = WriteData(postbegin.c_str(), postbegin.length());
+  if (FAILED(hr)) {
+    return ult::HttpStatus::kUnknownError;
+  }
   return ult::HttpStatus::kSuccess;
 }
 

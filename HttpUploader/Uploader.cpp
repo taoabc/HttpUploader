@@ -217,6 +217,7 @@ void CUploader::AsyncCalcMd5Thread(ULONG id, const std::wstring& file) {
 }
 
 void CUploader::UploadFileThread(ULONG id, const std::wstring& file, const std::wstring& md5, DWORD startpos) {
+  HRESULT hr;
   WinhttpUploader uploader;
   std::string md5a = ult::UnicodeToAnsi(md5);
   uploader.AddField(L"md5", md5a.c_str(), md5a.length());
@@ -237,7 +238,11 @@ void CUploader::UploadFileThread(ULONG id, const std::wstring& file, const std::
     return;
   }
   DWORD sendsize = (DWORD)t;
-  uploader.BeginPost(std::wstring(post_url_, post_url_.Length()), name, sendsize);
+  int ret = uploader.BeginPost(std::wstring(post_url_, post_url_.Length()), name, sendsize);
+  if (ret != ult::HttpStatus::kSuccess) {
+    PostMessageStateChanged(id, kWriteDataError);
+    return;
+  }
   DWORD buf_len = 128 * 1024; // set buffer 128K
   std::shared_ptr<char> buffer(new char[buf_len]);
   DWORD cursor = startpos;
@@ -259,7 +264,11 @@ void CUploader::UploadFileThread(ULONG id, const std::wstring& file, const std::
       PostMessageStateChanged(id, kUnknownError);
       return;
     }
-    uploader.WriteData(buffer.get(), readed);
+    hr = uploader.WriteData(buffer.get(), readed);
+    if (FAILED(hr)) {
+      PostMessageStateChanged(id, kWriteDataError);
+      return;
+    }
     cursor += write;
     newtk = ::GetTickCount();
     //如果小于1S，不计算速度
@@ -272,7 +281,11 @@ void CUploader::UploadFileThread(ULONG id, const std::wstring& file, const std::
     oldtk = newtk;
     oldcursor = cursor;
   }
-  uploader.EndPost();
+  hr = uploader.EndPost();
+  if (FAILED(hr)) {
+    PostMessageStateChanged(id, kWriteDataError);
+    return;
+  }
   PostMessagePost(id, 0, filesize, 100);
   PostMessageStateChanged(id, kPostSuccess);
 }

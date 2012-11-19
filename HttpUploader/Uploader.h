@@ -83,6 +83,8 @@ private:
 
   //type declare
   enum {
+    kWriteDataError         = -3,
+    kSendRequestError       = -2,
     kUnknownError           = -1,
     kPostSuccess            = 0,
     kBeginPost              = 1,
