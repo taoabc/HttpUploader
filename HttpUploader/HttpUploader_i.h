@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Sat Nov 17 22:11:27 2012
+/* at Thu Nov 22 23:09:50 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
