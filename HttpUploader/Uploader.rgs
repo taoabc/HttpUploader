@@ -1,15 +1,25 @@
 HKCR
 {
+	HttpUploader.Uploader.1 = s 'Uploader Class'
+	{
+		CLSID = s '{7E406662-E762-45BE-9552-51D900C61A14}'
+	}
+	HttpUploader.Uploader = s 'Uploader Class'
+	{		
+		CurVer = s 'HttpUploader.Uploader.1'
+	}
 	NoRemove CLSID
 	{
-		ForceRemove {3F31A1AB-6A27-4459-B9D8-C8C459F1F30D} = s 'Uploader Class'
+		ForceRemove {7E406662-E762-45BE-9552-51D900C61A14} = s 'Uploader Class'
 		{
+			ProgID = s 'HttpUploader.Uploader.1'
+			VersionIndependentProgID = s 'HttpUploader.Uploader'
 			ForceRemove Programmable
 			InprocServer32 = s '%MODULE%'
 			{
 				val ThreadingModel = s 'Apartment'
 			}
-			TypeLib = s '{ED6FA5A2-ACE5-4A5B-8899-72711BF827FC}'
+			TypeLib = s '{F845713E-D341-4F05-969B-F472EBC22B27}'
 			Version = s '1.0'
 		}
 	}

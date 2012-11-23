@@ -9,38 +9,22 @@ import "ocidl.idl";
 
 [
 	object,
-	uuid(F6A0A1C9-F652-4FDD-A455-1402D4C97C8E),
+	uuid(F80C6A56-E036-4AD8-8896-94295D242FC0),
 	dual,
 	nonextensible,
 	pointer_default(unique)
 ]
 interface IUploader : IDispatch{
-  [id(1), helpstring("test")] HRESULT Test([out,retval] LONG* result);
-  [id(2)] HRESULT ShowDialog(void);
-  [propget, id(3), helpstring("file upload address")] HRESULT UrlPost([out, retval] BSTR* pVal);
-  [propput, id(3), helpstring("file upload address")] HRESULT UrlPost([in] BSTR newVal);
-  [id(4), helpstring("get selected filename list")] HRESULT GetSelectedFiles([out,retval] IDispatch** result);
-  [propget, id(6), helpstring("on post event callback")] HRESULT OnPost([out, retval] IDispatch** pVal);
-  [propput, id(6), helpstring("on post event callback")] HRESULT OnPost([in] IDispatch* newVal);
-  [propget, id(7), helpstring("state change callback")] HRESULT OnStateChanged([out, retval] IDispatch** pVal);
-  [propput, id(7), helpstring("state change callback")] HRESULT OnStateChanged([in] IDispatch* newVal);
-  [id(9), helpstring("stop upload")] HRESULT Stop([in] ULONG id);
-  [id(10), helpstring("calc file's md5")] HRESULT CalcMd5([in] BSTR file_name, [out,retval] BSTR* result);
-  [id(11), helpstring("calculate file's md5 async")] HRESULT AsyncCalcMd5([in] ULONG id, [in] BSTR file, [out,retval] LONG* result);
-  [id(12), helpstring("post file")] HRESULT PostFile([in] ULONG id, [in] BSTR file, [out, retval] LONG* result);
-  [propget, id(13), helpstring("called when md5 getted")] HRESULT OnMd5Getted([out, retval] IDispatch** pVal);
-  [propput, id(13), helpstring("called when md5 getted")] HRESULT OnMd5Getted([in] IDispatch* newVal);
-  [id(14), helpstring("post resume file")] HRESULT PostResumeFile([in] ULONG id, [in] BSTR file, [in] BSTR md5, [in] ULONGLONG startpos, [out,retval] LONG* result);
 };
 [
-	uuid(ED6FA5A2-ACE5-4A5B-8899-72711BF827FC),
+	uuid(F845713E-D341-4F05-969B-F472EBC22B27),
 	version(1.0),
 ]
 library HttpUploaderLib
 {
 	importlib("stdole2.tlb");
 	[
-		uuid(3F31A1AB-6A27-4459-B9D8-C8C459F1F30D)		
+		uuid(7E406662-E762-45BE-9552-51D900C61A14)		
 	]
 	coclass Uploader
 	{

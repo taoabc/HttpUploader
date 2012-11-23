@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Generated Files">
-      <UniqueIdentifier>{9054db19-b540-403d-82f9-047a937a5766}</UniqueIdentifier>
+      <UniqueIdentifier>{4bfb24d5-d800-4ca6-9361-8f79468e6934}</UniqueIdentifier>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
   </ItemGroup>
@@ -35,15 +35,6 @@
       <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="Uploader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\depend\include\ult\encrypt\md5.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MsgWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WinhttpUploader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -69,15 +60,6 @@
     <ClInclude Include="Uploader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="JsArrayObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MsgWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WinhttpUploader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HttpUploader.rc">
@@ -85,9 +67,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="ReadMe.txt" />
     <None Include="HttpUploader.rgs">
       <Filter>Resource Files</Filter>
     </None>

@@ -3,11 +3,11 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 8.00.0595 */
-/* at Thu Nov 22 23:09:50 2012
+ /* File created by MIDL compiler version 7.00.0555 */
+/* at Sat Nov 24 00:37:36 2012
  */
 /* Compiler settings for HttpUploader.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0595 
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -48,7 +48,6 @@
 #ifndef __IUploader_FWD_DEFINED__
 #define __IUploader_FWD_DEFINED__
 typedef interface IUploader IUploader;
-
 #endif 	/* __IUploader_FWD_DEFINED__ */
 
 
@@ -84,68 +83,11 @@ EXTERN_C const IID IID_IUploader;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("F6A0A1C9-F652-4FDD-A455-1402D4C97C8E")
+    MIDL_INTERFACE("F80C6A56-E036-4AD8-8896-94295D242FC0")
     IUploader : public IDispatch
     {
     public:
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Test( 
-            /* [retval][out] */ LONG *result) = 0;
-        
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE ShowDialog( void) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_UrlPost( 
-            /* [retval][out] */ BSTR *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_UrlPost( 
-            /* [in] */ BSTR newVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetSelectedFiles( 
-            /* [retval][out] */ IDispatch **result) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnPost( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnPost( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnStateChanged( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnStateChanged( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Stop( 
-            /* [in] */ ULONG id) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE CalcMd5( 
-            /* [in] */ BSTR file_name,
-            /* [retval][out] */ BSTR *result) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE AsyncCalcMd5( 
-            /* [in] */ ULONG id,
-            /* [in] */ BSTR file,
-            /* [retval][out] */ LONG *result) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PostFile( 
-            /* [in] */ ULONG id,
-            /* [in] */ BSTR file,
-            /* [retval][out] */ LONG *result) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnMd5Getted( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnMd5Getted( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PostResumeFile( 
-            /* [in] */ ULONG id,
-            /* [in] */ BSTR file,
-            /* [in] */ BSTR md5,
-            /* [in] */ ULONGLONG startpos,
-            /* [retval][out] */ LONG *result) = 0;
-        
     };
-    
     
 #else 	/* C style interface */
 
@@ -157,7 +99,7 @@ EXTERN_C const IID IID_IUploader;
             IUploader * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
+            __RPC__deref_out  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IUploader * This);
@@ -185,94 +127,14 @@ EXTERN_C const IID IID_IUploader;
         
         /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
             IUploader * This,
-            /* [annotation][in] */ 
-            _In_  DISPID dispIdMember,
-            /* [annotation][in] */ 
-            _In_  REFIID riid,
-            /* [annotation][in] */ 
-            _In_  LCID lcid,
-            /* [annotation][in] */ 
-            _In_  WORD wFlags,
-            /* [annotation][out][in] */ 
-            _In_  DISPPARAMS *pDispParams,
-            /* [annotation][out] */ 
-            _Out_opt_  VARIANT *pVarResult,
-            /* [annotation][out] */ 
-            _Out_opt_  EXCEPINFO *pExcepInfo,
-            /* [annotation][out] */ 
-            _Out_opt_  UINT *puArgErr);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Test )( 
-            IUploader * This,
-            /* [retval][out] */ LONG *result);
-        
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *ShowDialog )( 
-            IUploader * This);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_UrlPost )( 
-            IUploader * This,
-            /* [retval][out] */ BSTR *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_UrlPost )( 
-            IUploader * This,
-            /* [in] */ BSTR newVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetSelectedFiles )( 
-            IUploader * This,
-            /* [retval][out] */ IDispatch **result);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnPost )( 
-            IUploader * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnPost )( 
-            IUploader * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnStateChanged )( 
-            IUploader * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnStateChanged )( 
-            IUploader * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
-            IUploader * This,
-            /* [in] */ ULONG id);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *CalcMd5 )( 
-            IUploader * This,
-            /* [in] */ BSTR file_name,
-            /* [retval][out] */ BSTR *result);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *AsyncCalcMd5 )( 
-            IUploader * This,
-            /* [in] */ ULONG id,
-            /* [in] */ BSTR file,
-            /* [retval][out] */ LONG *result);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *PostFile )( 
-            IUploader * This,
-            /* [in] */ ULONG id,
-            /* [in] */ BSTR file,
-            /* [retval][out] */ LONG *result);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnMd5Getted )( 
-            IUploader * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnMd5Getted )( 
-            IUploader * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *PostResumeFile )( 
-            IUploader * This,
-            /* [in] */ ULONG id,
-            /* [in] */ BSTR file,
-            /* [in] */ BSTR md5,
-            /* [in] */ ULONGLONG startpos,
-            /* [retval][out] */ LONG *result);
+            /* [in] */ DISPID dispIdMember,
+            /* [in] */ REFIID riid,
+            /* [in] */ LCID lcid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS *pDispParams,
+            /* [out] */ VARIANT *pVarResult,
+            /* [out] */ EXCEPINFO *pExcepInfo,
+            /* [out] */ UINT *puArgErr);
         
         END_INTERFACE
     } IUploaderVtbl;
@@ -310,54 +172,6 @@ EXTERN_C const IID IID_IUploader;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
-#define IUploader_Test(This,result)	\
-    ( (This)->lpVtbl -> Test(This,result) ) 
-
-#define IUploader_ShowDialog(This)	\
-    ( (This)->lpVtbl -> ShowDialog(This) ) 
-
-#define IUploader_get_UrlPost(This,pVal)	\
-    ( (This)->lpVtbl -> get_UrlPost(This,pVal) ) 
-
-#define IUploader_put_UrlPost(This,newVal)	\
-    ( (This)->lpVtbl -> put_UrlPost(This,newVal) ) 
-
-#define IUploader_GetSelectedFiles(This,result)	\
-    ( (This)->lpVtbl -> GetSelectedFiles(This,result) ) 
-
-#define IUploader_get_OnPost(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnPost(This,pVal) ) 
-
-#define IUploader_put_OnPost(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnPost(This,newVal) ) 
-
-#define IUploader_get_OnStateChanged(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnStateChanged(This,pVal) ) 
-
-#define IUploader_put_OnStateChanged(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnStateChanged(This,newVal) ) 
-
-#define IUploader_Stop(This,id)	\
-    ( (This)->lpVtbl -> Stop(This,id) ) 
-
-#define IUploader_CalcMd5(This,file_name,result)	\
-    ( (This)->lpVtbl -> CalcMd5(This,file_name,result) ) 
-
-#define IUploader_AsyncCalcMd5(This,id,file,result)	\
-    ( (This)->lpVtbl -> AsyncCalcMd5(This,id,file,result) ) 
-
-#define IUploader_PostFile(This,id,file,result)	\
-    ( (This)->lpVtbl -> PostFile(This,id,file,result) ) 
-
-#define IUploader_get_OnMd5Getted(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnMd5Getted(This,pVal) ) 
-
-#define IUploader_put_OnMd5Getted(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnMd5Getted(This,newVal) ) 
-
-#define IUploader_PostResumeFile(This,id,file,md5,startpos,result)	\
-    ( (This)->lpVtbl -> PostResumeFile(This,id,file,md5,startpos,result) ) 
-
 #endif /* COBJMACROS */
 
 
@@ -383,17 +197,12 @@ EXTERN_C const CLSID CLSID_Uploader;
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("3F31A1AB-6A27-4459-B9D8-C8C459F1F30D")
+class DECLSPEC_UUID("7E406662-E762-45BE-9552-51D900C61A14")
 Uploader;
 #endif
 #endif /* __HttpUploaderLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */
-
-unsigned long             __RPC_USER  BSTR_UserSize(     unsigned long *, unsigned long            , BSTR * ); 
-unsigned char * __RPC_USER  BSTR_UserMarshal(  unsigned long *, unsigned char *, BSTR * ); 
-unsigned char * __RPC_USER  BSTR_UserUnmarshal(unsigned long *, unsigned char *, BSTR * ); 
-void                      __RPC_USER  BSTR_UserFree(     unsigned long *, BSTR * ); 
 
 /* end of Additional Prototypes */
 
