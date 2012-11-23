@@ -37,6 +37,12 @@
     <ClCompile Include="Uploader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MsgWnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinhttpUploader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -58,6 +64,15 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="Uploader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JsArrayObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgWnd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WinhttpUploader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,20 +18,20 @@ CUploader* MsgWnd::GetUploader(void) {
 LRESULT MsgWnd::OnCalcMd5(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled) {
   std::shared_ptr<Md5GettedParam> param((Md5GettedParam*)wparam);
   CUploader* uploader = GetUploader();
-  uploader->OnMd5Getted(param->id, param->md5);
+  //uploader->OnMd5Getted(param->id, param->md5);
   return 0;
 }
 
 LRESULT MsgWnd::OnPost(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled) {
   std::shared_ptr<PostParam> param((PostParam*)wparam);
   CUploader* uploader = GetUploader();
-  uploader->OnPost(param->id, param->speed, param->posted, param->percent);
+  //uploader->OnPost(param->id, param->speed, param->posted, param->percent);
   return 0;
 }
 
 LRESULT MsgWnd::OnStateChanged(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled) {
   std::shared_ptr<StateChangedParam> param((StateChangedParam*)wparam);
   CUploader* uploader = GetUploader();
-  uploader->OnStateChanged(param->id, param->state);
+  //uploader->OnStateChanged(param->id, param->state);
   return 0;
 }
