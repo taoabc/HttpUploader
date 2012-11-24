@@ -1,101 +1,113 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Generated Files">
       <UniqueIdentifier>{4bfb24d5-d800-4ca6-9361-8f79468e6934}</UniqueIdentifier>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Spec">
+      <UniqueIdentifier>{93bfac14-7673-4cfd-940c-c2d17488762f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{8a45b593-abd0-4d40-ad0a-53617f870f47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Support">
+      <UniqueIdentifier>{fd19ad73-c918-4f75-a3fc-6ab3feb4df18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HttpUploader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="xdlldata.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HttpUploader_i.c">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="Uploader.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpUploader.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
     <ClCompile Include="MsgWnd.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Spec</Filter>
+    </ClCompile>
+    <ClCompile Include="Uploader.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
     <ClCompile Include="WinhttpUploader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="xdlldata.c">
+      <Filter>Spec</Filter>
+    </ClCompile>
+    <ClCompile Include="Partition.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dllmain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xdlldata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HttpUploader_i.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="Uploader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="JsArrayObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="dllmain.h">
+      <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="MsgWnd.h">
-      <Filter>Header Files</Filter>
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Spec</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Spec</Filter>
+    </ClInclude>
+    <ClInclude Include="Uploader.h">
+      <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="WinhttpUploader.h">
-      <Filter>Header Files</Filter>
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="xdlldata.h">
+      <Filter>Spec</Filter>
+    </ClInclude>
+    <ClInclude Include="Partition.h">
+      <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HttpUploader.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
     <None Include="HttpUploader.rgs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="HttpUploader.def">
-      <Filter>Source Files</Filter>
+      <Filter>Resource</Filter>
     </None>
     <None Include="Uploader.rgs">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="ReadMe.txt">
+      <Filter>Spec</Filter>
+    </None>
+    <None Include="HttpUploader.def">
+      <Filter>Interface</Filter>
+    </None>
+    <None Include="Partition.rgs">
+      <Filter>Resource</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="HttpUploader.idl">
-      <Filter>Source Files</Filter>
+      <Filter>Interface</Filter>
     </Midl>
   </ItemGroup>
 </Project>

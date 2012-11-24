@@ -25,3 +25,5 @@
 #include <atlctl.h>
 
 #include <string>
+#include <vector>
+#include <algorithm>

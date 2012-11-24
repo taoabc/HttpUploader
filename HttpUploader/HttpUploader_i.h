@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Sat Nov 24 01:17:06 2012
+/* at Sun Nov 25 01:17:24 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -51,6 +51,12 @@ typedef interface IUploader IUploader;
 #endif 	/* __IUploader_FWD_DEFINED__ */
 
 
+#ifndef __IPartition_FWD_DEFINED__
+#define __IPartition_FWD_DEFINED__
+typedef interface IPartition IPartition;
+#endif 	/* __IPartition_FWD_DEFINED__ */
+
+
 #ifndef __Uploader_FWD_DEFINED__
 #define __Uploader_FWD_DEFINED__
 
@@ -61,6 +67,18 @@ typedef struct Uploader Uploader;
 #endif /* __cplusplus */
 
 #endif 	/* __Uploader_FWD_DEFINED__ */
+
+
+#ifndef __Partition_FWD_DEFINED__
+#define __Partition_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class Partition Partition;
+#else
+typedef struct Partition Partition;
+#endif /* __cplusplus */
+
+#endif 	/* __Partition_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -183,6 +201,129 @@ EXTERN_C const IID IID_IUploader;
 #endif 	/* __IUploader_INTERFACE_DEFINED__ */
 
 
+#ifndef __IPartition_INTERFACE_DEFINED__
+#define __IPartition_INTERFACE_DEFINED__
+
+/* interface IPartition */
+/* [unique][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IPartition;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("ABEAD3B2-6F91-416C-846A-E339B25CA57C")
+    IPartition : public IDispatch
+    {
+    public:
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE ShowDialog( 
+            /* [retval][out] */ BYTE *result) = 0;
+        
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct IPartitionVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IPartition * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            __RPC__deref_out  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IPartition * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IPartition * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            IPartition * This,
+            /* [out] */ UINT *pctinfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            IPartition * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            IPartition * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            IPartition * This,
+            /* [in] */ DISPID dispIdMember,
+            /* [in] */ REFIID riid,
+            /* [in] */ LCID lcid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS *pDispParams,
+            /* [out] */ VARIANT *pVarResult,
+            /* [out] */ EXCEPINFO *pExcepInfo,
+            /* [out] */ UINT *puArgErr);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *ShowDialog )( 
+            IPartition * This,
+            /* [retval][out] */ BYTE *result);
+        
+        END_INTERFACE
+    } IPartitionVtbl;
+
+    interface IPartition
+    {
+        CONST_VTBL struct IPartitionVtbl *lpVtbl;
+        [propget] HRESULT FileFilter([out, retval] BSTR* pVal);
+        [propput] HRESULT FileFilter([in] BSTR newVal);
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IPartition_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IPartition_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IPartition_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IPartition_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define IPartition_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define IPartition_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define IPartition_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#define IPartition_ShowDialog(This,result)	\
+    ( (This)->lpVtbl -> ShowDialog(This,result) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IPartition_INTERFACE_DEFINED__ */
+
+
 
 #ifndef __HttpUploaderLib_LIBRARY_DEFINED__
 #define __HttpUploaderLib_LIBRARY_DEFINED__
@@ -199,6 +340,14 @@ EXTERN_C const CLSID CLSID_Uploader;
 
 class DECLSPEC_UUID("7E406662-E762-45BE-9552-51D900C61A14")
 Uploader;
+#endif
+
+EXTERN_C const CLSID CLSID_Partition;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("DE4934DA-A37E-4E47-88A7-521DB39A5EE4")
+Partition;
 #endif
 #endif /* __HttpUploaderLib_LIBRARY_DEFINED__ */
 

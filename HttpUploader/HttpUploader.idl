@@ -17,6 +17,16 @@ import "ocidl.idl";
 interface IUploader : IDispatch{
 };
 [
+	object,
+	uuid(ABEAD3B2-6F91-416C-846A-E339B25CA57C),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IPartition : IDispatch{
+  [id(1)] HRESULT ShowDialog([out,retval] BYTE* result);
+};
+[
 	uuid(F845713E-D341-4F05-969B-F472EBC22B27),
 	version(1.0),
 ]
@@ -29,6 +39,13 @@ library HttpUploaderLib
 	coclass Uploader
 	{
 		[default] interface IUploader;
+	};
+	[
+		uuid(DE4934DA-A37E-4E47-88A7-521DB39A5EE4)		
+	]
+	coclass Partition
+	{
+		[default] interface IPartition;
 	};
 };
 

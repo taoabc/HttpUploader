@@ -2,71 +2,30 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>plugin test</title>
-    <object id="Uploader" classid="clsid:3F31A1AB-6A27-4459-B9D8-C8C459F1F30D" codebase="http://127.0.0.1/uploader/pack.cab#version=1,0,0,1"></object>
+    <object id="Uploader" classid="clsid:7E406662-E762-45BE-9552-51D900C61A14" codebase="http://127.0.0.1/uploader/pack.cab#version=1,0,0,1"></object>
+    <object id="Partition" classid="clsid:DE4934DA-A37E-4E47-88A7-521DB39A5EE4"></object>
     <script type="text/javascript">
       var g_filename;
       function AppendOutput(txt) {
         var e = document.getElementById("output");
         e.value = e.value + "\n" + txt;
       }
-      function ShowDialog() {
-        Uploader.ShowDialog();
-        var selected = Uploader.GetSelectedFiles();
-        for (var i = 0; i < selected.Size(); ++i) {
-          AppendOutput(selected.At(i));
-        }
-      }
       function ClearOutput() {
         var e = document.getElementById("output");
         e.value = ""
       }
-      function Md5Getted(id, md5) {
-        AppendOutput("file id: " + id);
-        AppendOutput("md5: " + md5);
-        if (id == 999) {
-          Uploader.PostResumeFile(999, g_filename, md5, 10000);
+      function InitPlugin() {
+      }
+      function ShowDialog() {
+        Partition.FileFilter = "asdf"
+        if (!Partition.ShowDialog()) {
+        alert("not show dialog");
+        } else {
+          alert("show dialog");
         }
       }
       function Test() {
-      }
-      function OnPostFile(id, speed, posted, percent) {
-        AppendOutput("OnPost id:" + id + " speed:" + speed + " posted:"
-            + posted + " percent:" + percent);
-      }
-      function CalcAllFileMd5() {
-        var selected = Uploader.GetSelectedFiles();
-        for (var i = 0; i < selected.Size(); ++i) {
-          var file = selected.At(i);
-          Uploader.AsyncCalcMd5(i, file);
-        }
-      }
-      function PostAllFile() {
-        var selected = Uploader.GetSelectedFiles();
-        for (var i = 0; i < selected.Size(); ++i) {
-          var file = selected.At(i);
-          Uploader.PostFile(i, file);
-        }
-      }
-      function OnStateChanged(id, state) {
-        AppendOutput("OnStateChanged id:" + id + " state:" + state);
-      }
-      function InitPlugin() {
-        Uploader.OnMd5Getted = Md5Getted;
-        Uploader.OnPost = OnPostFile;
-        Uploader.OnStateChanged = OnStateChanged;
-        Uploader.UrlPost = "http://127.0.0.1/uploader/upload.php";
-      }
-      function StopPost() {
-        Uploader.Stop(0);
-      }
-      function PostResumeFile() {
-        var selected = Uploader.GetSelectedFiles();
-        if (selected.Size() > 0) {
-          var file = selected.At(0);
-          var testid = 999;
-          g_filename = file;
-          Uploader.AsyncCalcMd5(999, file);
-        }
+      
       }
     </script>
   </head>

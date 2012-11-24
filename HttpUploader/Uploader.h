@@ -25,9 +25,7 @@ class ATL_NO_VTABLE CUploader :
 	public IDispatchImpl<IUploader, &IID_IUploader, &LIBID_HttpUploaderLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
 	public IObjectSafetyImpl<CUploader, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA> {
 public:
-	CUploader()
-	{
-	}
+	CUploader(void);
 
 DECLARE_REGISTRY_RESOURCEID(IDR_UPLOADER)
 
@@ -44,18 +42,24 @@ END_COM_MAP()
 
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-	HRESULT FinalConstruct()
-	{
+	HRESULT FinalConstruct() {
 		return S_OK;
 	}
 
-	void FinalRelease()
-	{
+	void FinalRelease()	{
 	}
+
+private:
+
+  //ie related
+  CComQIPtr<IWebBrowser2> pwebbrowser_;
+  CComQIPtr<IHTMLDocument2> phtmldoc_;
+  HWND hwnd_browser_;
 
 public:
 
-
+  // IObjectWithSite
+  STDMETHOD(SetSite)(IUnknown* punksite);
 
 };
 
