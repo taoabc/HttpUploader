@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Sun Nov 25 01:17:24 2012
+/* at Sun Nov 25 21:54:14 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -105,6 +105,100 @@ EXTERN_C const IID IID_IUploader;
     IUploader : public IDispatch
     {
     public:
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_MD5( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_MD5( 
+            /* [in] */ BSTR newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_PostedLength( 
+            /* [retval][out] */ ULONGLONG *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_PostedLength( 
+            /* [in] */ ULONGLONG newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_PostUrl( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_PostUrl( 
+            /* [in] */ BSTR newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_EncodeType( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_EncodeType( 
+            /* [in] */ BSTR newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_OnPost( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_OnPost( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_OnStateChanged( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_OnStateChanged( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_LocalFile( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_LocalFile( 
+            /* [in] */ BSTR newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_FileSizeLimit( 
+            /* [retval][out] */ ULONGLONG *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_FileSizeLimit( 
+            /* [in] */ ULONGLONG newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_RangeSize( 
+            /* [retval][out] */ ULONGLONG *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_RangeSize( 
+            /* [in] */ ULONGLONG newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_CompanyLicensed( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_CompanyLicensed( 
+            /* [in] */ BSTR newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_FileID( 
+            /* [retval][out] */ ULONG *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_FileID( 
+            /* [in] */ ULONG newVal) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE ClearFields( 
+            /* [retval][out] */ LONG *result) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE AddField( 
+            /* [in] */ BSTR key,
+            /* [in] */ BSTR value) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE Post( 
+            /* [retval][out] */ LONG *result) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE CheckFile( 
+            /* [retval][out] */ LONG *result) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE Stop( 
+            /* [retval][out] */ LONG *result) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_Object( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_Object( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_Md5Percent( 
+            /* [retval][out] */ USHORT *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_Md5Percent( 
+            /* [in] */ USHORT newVal) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -154,6 +248,131 @@ EXTERN_C const IID IID_IUploader;
             /* [out] */ EXCEPINFO *pExcepInfo,
             /* [out] */ UINT *puArgErr);
         
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_MD5 )( 
+            IUploader * This,
+            /* [retval][out] */ BSTR *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_MD5 )( 
+            IUploader * This,
+            /* [in] */ BSTR newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_PostedLength )( 
+            IUploader * This,
+            /* [retval][out] */ ULONGLONG *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_PostedLength )( 
+            IUploader * This,
+            /* [in] */ ULONGLONG newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_PostUrl )( 
+            IUploader * This,
+            /* [retval][out] */ BSTR *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_PostUrl )( 
+            IUploader * This,
+            /* [in] */ BSTR newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_EncodeType )( 
+            IUploader * This,
+            /* [retval][out] */ BSTR *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_EncodeType )( 
+            IUploader * This,
+            /* [in] */ BSTR newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnPost )( 
+            IUploader * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnPost )( 
+            IUploader * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnStateChanged )( 
+            IUploader * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnStateChanged )( 
+            IUploader * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_LocalFile )( 
+            IUploader * This,
+            /* [retval][out] */ BSTR *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_LocalFile )( 
+            IUploader * This,
+            /* [in] */ BSTR newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_FileSizeLimit )( 
+            IUploader * This,
+            /* [retval][out] */ ULONGLONG *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_FileSizeLimit )( 
+            IUploader * This,
+            /* [in] */ ULONGLONG newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_RangeSize )( 
+            IUploader * This,
+            /* [retval][out] */ ULONGLONG *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_RangeSize )( 
+            IUploader * This,
+            /* [in] */ ULONGLONG newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_CompanyLicensed )( 
+            IUploader * This,
+            /* [retval][out] */ BSTR *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_CompanyLicensed )( 
+            IUploader * This,
+            /* [in] */ BSTR newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_FileID )( 
+            IUploader * This,
+            /* [retval][out] */ ULONG *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_FileID )( 
+            IUploader * This,
+            /* [in] */ ULONG newVal);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *ClearFields )( 
+            IUploader * This,
+            /* [retval][out] */ LONG *result);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *AddField )( 
+            IUploader * This,
+            /* [in] */ BSTR key,
+            /* [in] */ BSTR value);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *Post )( 
+            IUploader * This,
+            /* [retval][out] */ LONG *result);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *CheckFile )( 
+            IUploader * This,
+            /* [retval][out] */ LONG *result);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
+            IUploader * This,
+            /* [retval][out] */ LONG *result);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Object )( 
+            IUploader * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Object )( 
+            IUploader * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Md5Percent )( 
+            IUploader * This,
+            /* [retval][out] */ USHORT *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Md5Percent )( 
+            IUploader * This,
+            /* [in] */ USHORT newVal);
+        
         END_INTERFACE
     } IUploaderVtbl;
 
@@ -190,6 +409,99 @@ EXTERN_C const IID IID_IUploader;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
+#define IUploader_get_MD5(This,pVal)	\
+    ( (This)->lpVtbl -> get_MD5(This,pVal) ) 
+
+#define IUploader_put_MD5(This,newVal)	\
+    ( (This)->lpVtbl -> put_MD5(This,newVal) ) 
+
+#define IUploader_get_PostedLength(This,pVal)	\
+    ( (This)->lpVtbl -> get_PostedLength(This,pVal) ) 
+
+#define IUploader_put_PostedLength(This,newVal)	\
+    ( (This)->lpVtbl -> put_PostedLength(This,newVal) ) 
+
+#define IUploader_get_PostUrl(This,pVal)	\
+    ( (This)->lpVtbl -> get_PostUrl(This,pVal) ) 
+
+#define IUploader_put_PostUrl(This,newVal)	\
+    ( (This)->lpVtbl -> put_PostUrl(This,newVal) ) 
+
+#define IUploader_get_EncodeType(This,pVal)	\
+    ( (This)->lpVtbl -> get_EncodeType(This,pVal) ) 
+
+#define IUploader_put_EncodeType(This,newVal)	\
+    ( (This)->lpVtbl -> put_EncodeType(This,newVal) ) 
+
+#define IUploader_get_OnPost(This,pVal)	\
+    ( (This)->lpVtbl -> get_OnPost(This,pVal) ) 
+
+#define IUploader_put_OnPost(This,newVal)	\
+    ( (This)->lpVtbl -> put_OnPost(This,newVal) ) 
+
+#define IUploader_get_OnStateChanged(This,pVal)	\
+    ( (This)->lpVtbl -> get_OnStateChanged(This,pVal) ) 
+
+#define IUploader_put_OnStateChanged(This,newVal)	\
+    ( (This)->lpVtbl -> put_OnStateChanged(This,newVal) ) 
+
+#define IUploader_get_LocalFile(This,pVal)	\
+    ( (This)->lpVtbl -> get_LocalFile(This,pVal) ) 
+
+#define IUploader_put_LocalFile(This,newVal)	\
+    ( (This)->lpVtbl -> put_LocalFile(This,newVal) ) 
+
+#define IUploader_get_FileSizeLimit(This,pVal)	\
+    ( (This)->lpVtbl -> get_FileSizeLimit(This,pVal) ) 
+
+#define IUploader_put_FileSizeLimit(This,newVal)	\
+    ( (This)->lpVtbl -> put_FileSizeLimit(This,newVal) ) 
+
+#define IUploader_get_RangeSize(This,pVal)	\
+    ( (This)->lpVtbl -> get_RangeSize(This,pVal) ) 
+
+#define IUploader_put_RangeSize(This,newVal)	\
+    ( (This)->lpVtbl -> put_RangeSize(This,newVal) ) 
+
+#define IUploader_get_CompanyLicensed(This,pVal)	\
+    ( (This)->lpVtbl -> get_CompanyLicensed(This,pVal) ) 
+
+#define IUploader_put_CompanyLicensed(This,newVal)	\
+    ( (This)->lpVtbl -> put_CompanyLicensed(This,newVal) ) 
+
+#define IUploader_get_FileID(This,pVal)	\
+    ( (This)->lpVtbl -> get_FileID(This,pVal) ) 
+
+#define IUploader_put_FileID(This,newVal)	\
+    ( (This)->lpVtbl -> put_FileID(This,newVal) ) 
+
+#define IUploader_ClearFields(This,result)	\
+    ( (This)->lpVtbl -> ClearFields(This,result) ) 
+
+#define IUploader_AddField(This,key,value)	\
+    ( (This)->lpVtbl -> AddField(This,key,value) ) 
+
+#define IUploader_Post(This,result)	\
+    ( (This)->lpVtbl -> Post(This,result) ) 
+
+#define IUploader_CheckFile(This,result)	\
+    ( (This)->lpVtbl -> CheckFile(This,result) ) 
+
+#define IUploader_Stop(This,result)	\
+    ( (This)->lpVtbl -> Stop(This,result) ) 
+
+#define IUploader_get_Object(This,pVal)	\
+    ( (This)->lpVtbl -> get_Object(This,pVal) ) 
+
+#define IUploader_put_Object(This,newVal)	\
+    ( (This)->lpVtbl -> put_Object(This,newVal) ) 
+
+#define IUploader_get_Md5Percent(This,pVal)	\
+    ( (This)->lpVtbl -> get_Md5Percent(This,pVal) ) 
+
+#define IUploader_put_Md5Percent(This,newVal)	\
+    ( (This)->lpVtbl -> put_Md5Percent(This,newVal) ) 
+
 #endif /* COBJMACROS */
 
 
@@ -218,6 +530,27 @@ EXTERN_C const IID IID_IPartition;
     public:
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE ShowDialog( 
             /* [retval][out] */ BYTE *result) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_FileFilter( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_FileFilter( 
+            /* [in] */ BSTR newVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_AllowMultiSelect( 
+            /* [retval][out] */ BYTE *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_AllowMultiSelect( 
+            /* [in] */ BYTE newVal) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE ShowFolder( 
+            /* [retval][out] */ BYTE *result) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetSelectedFiles( 
+            /* [retval][out] */ IDispatch **result) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetClipboardFiles( 
+            /* [retval][out] */ IDispatch **result) = 0;
         
     };
     
@@ -272,14 +605,40 @@ EXTERN_C const IID IID_IPartition;
             IPartition * This,
             /* [retval][out] */ BYTE *result);
         
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_FileFilter )( 
+            IPartition * This,
+            /* [retval][out] */ BSTR *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_FileFilter )( 
+            IPartition * This,
+            /* [in] */ BSTR newVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_AllowMultiSelect )( 
+            IPartition * This,
+            /* [retval][out] */ BYTE *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_AllowMultiSelect )( 
+            IPartition * This,
+            /* [in] */ BYTE newVal);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *ShowFolder )( 
+            IPartition * This,
+            /* [retval][out] */ BYTE *result);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *GetSelectedFiles )( 
+            IPartition * This,
+            /* [retval][out] */ IDispatch **result);
+        
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *GetClipboardFiles )( 
+            IPartition * This,
+            /* [retval][out] */ IDispatch **result);
+        
         END_INTERFACE
     } IPartitionVtbl;
 
     interface IPartition
     {
         CONST_VTBL struct IPartitionVtbl *lpVtbl;
-        [propget] HRESULT FileFilter([out, retval] BSTR* pVal);
-        [propput] HRESULT FileFilter([in] BSTR newVal);
     };
 
     
@@ -312,6 +671,27 @@ EXTERN_C const IID IID_IPartition;
 
 #define IPartition_ShowDialog(This,result)	\
     ( (This)->lpVtbl -> ShowDialog(This,result) ) 
+
+#define IPartition_get_FileFilter(This,pVal)	\
+    ( (This)->lpVtbl -> get_FileFilter(This,pVal) ) 
+
+#define IPartition_put_FileFilter(This,newVal)	\
+    ( (This)->lpVtbl -> put_FileFilter(This,newVal) ) 
+
+#define IPartition_get_AllowMultiSelect(This,pVal)	\
+    ( (This)->lpVtbl -> get_AllowMultiSelect(This,pVal) ) 
+
+#define IPartition_put_AllowMultiSelect(This,newVal)	\
+    ( (This)->lpVtbl -> put_AllowMultiSelect(This,newVal) ) 
+
+#define IPartition_ShowFolder(This,result)	\
+    ( (This)->lpVtbl -> ShowFolder(This,result) ) 
+
+#define IPartition_GetSelectedFiles(This,result)	\
+    ( (This)->lpVtbl -> GetSelectedFiles(This,result) ) 
+
+#define IPartition_GetClipboardFiles(This,result)	\
+    ( (This)->lpVtbl -> GetClipboardFiles(This,result) ) 
 
 #endif /* COBJMACROS */
 
@@ -352,6 +732,11 @@ Partition;
 #endif /* __HttpUploaderLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */
+
+unsigned long             __RPC_USER  BSTR_UserSize(     unsigned long *, unsigned long            , BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserMarshal(  unsigned long *, unsigned char *, BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserUnmarshal(unsigned long *, unsigned char *, BSTR * ); 
+void                      __RPC_USER  BSTR_UserFree(     unsigned long *, BSTR * ); 
 
 /* end of Additional Prototypes */
 

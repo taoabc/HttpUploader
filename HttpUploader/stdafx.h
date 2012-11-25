@@ -24,6 +24,11 @@
 #include <atlcom.h>
 #include <atlctl.h>
 
+#include <boost/foreach.hpp>
+
+#include <Windows.h>
+#include <ShlObj.h>
+
 #include <string>
 #include <vector>
 #include <algorithm>

@@ -15,6 +15,37 @@ import "ocidl.idl";
 	pointer_default(unique)
 ]
 interface IUploader : IDispatch{
+  [propget, id(1)] HRESULT MD5([out, retval] BSTR* pVal);
+  [propput, id(1)] HRESULT MD5([in] BSTR newVal);
+  [propget, id(2)] HRESULT PostedLength([out, retval] ULONGLONG* pVal);
+  [propput, id(2)] HRESULT PostedLength([in] ULONGLONG newVal);
+  [propget, id(3)] HRESULT PostUrl([out, retval] BSTR* pVal);
+  [propput, id(3)] HRESULT PostUrl([in] BSTR newVal);
+  [propget, id(4)] HRESULT EncodeType([out, retval] BSTR* pVal);
+  [propput, id(4)] HRESULT EncodeType([in] BSTR newVal);
+  [propget, id(5)] HRESULT OnPost([out, retval] IDispatch** pVal);
+  [propput, id(5)] HRESULT OnPost([in] IDispatch* newVal);
+  [propget, id(6)] HRESULT OnStateChanged([out, retval] IDispatch** pVal);
+  [propput, id(6)] HRESULT OnStateChanged([in] IDispatch* newVal);
+  [propget, id(7)] HRESULT LocalFile([out, retval] BSTR* pVal);
+  [propput, id(7)] HRESULT LocalFile([in] BSTR newVal);
+  [propget, id(8)] HRESULT FileSizeLimit([out, retval] ULONGLONG* pVal);
+  [propput, id(8)] HRESULT FileSizeLimit([in] ULONGLONG newVal);
+  [propget, id(9)] HRESULT RangeSize([out, retval] ULONGLONG* pVal);
+  [propput, id(9)] HRESULT RangeSize([in] ULONGLONG newVal);
+  [propget, id(10)] HRESULT CompanyLicensed([out, retval] BSTR* pVal);
+  [propput, id(10)] HRESULT CompanyLicensed([in] BSTR newVal);
+  [propget, id(11)] HRESULT FileID([out, retval] ULONG* pVal);
+  [propput, id(11)] HRESULT FileID([in] ULONG newVal);
+  [id(12)] HRESULT ClearFields([out,retval] LONG* result);
+  [id(13)] HRESULT AddField([in] BSTR key, [in] BSTR value);
+  [id(14)] HRESULT Post([out,retval] LONG* result);
+  [id(15)] HRESULT CheckFile([out,retval] LONG* result);
+  [id(16)] HRESULT Stop([out,retval] LONG* result);
+  [propget, id(17)] HRESULT Object([out, retval] IDispatch** pVal);
+  [propput, id(17)] HRESULT Object([in] IDispatch* newVal);
+  [propget, id(18)] HRESULT Md5Percent([out, retval] USHORT* pVal);
+  [propput, id(18)] HRESULT Md5Percent([in] USHORT newVal);
 };
 [
 	object,
@@ -25,6 +56,13 @@ interface IUploader : IDispatch{
 ]
 interface IPartition : IDispatch{
   [id(1)] HRESULT ShowDialog([out,retval] BYTE* result);
+  [propget, id(2)] HRESULT FileFilter([out, retval] BSTR* pVal);
+  [propput, id(2)] HRESULT FileFilter([in] BSTR newVal);
+  [propget, id(3)] HRESULT AllowMultiSelect([out, retval] BYTE* pVal);
+  [propput, id(3)] HRESULT AllowMultiSelect([in] BYTE newVal);
+  [id(4)] HRESULT ShowFolder([out,retval] BYTE* result);
+  [id(5)] HRESULT GetSelectedFiles([out,retval] IDispatch** result);
+  [id(6)] HRESULT GetClipboardFiles([out,retval] IDispatch** result);
 };
 [
 	uuid(F845713E-D341-4F05-969B-F472EBC22B27),

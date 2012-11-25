@@ -55,11 +55,11 @@ private:
   STDMETHOD(SetSite)(IUnknown* punksite);
 
   //project independent
-  bool GetOpenFiles(HWND hwnd, std::vector<std::wstring>* pvec);
+  bool GetOpenFiles(HWND hwnd, std::wstring file_filter, bool multi_select, std::vector<std::wstring>* pvec);
+  bool GetOpenDir(HWND hwnd, std::wstring* dir);
 
-  HRESULT InvokeMethod(IDispatch* disp, VARIANT* param, UINT args, VARIANT* result);
-  HRESULT InvokeMethod(IDispatch* disp, DISPID dispid, VARIANT* param, UINT args, VARIANT* result);
-  DISPID FindId(IDispatch* disp, LPOLESTR name);
+  //project depend
+  std::wstring NormalFileFilter(const std::wstring& filter);
 
   //ie related
   CComQIPtr<IWebBrowser2> pwebbrowser_;
@@ -67,11 +67,18 @@ private:
   HWND hwnd_browser_;
 
   std::vector<std::wstring> selected_file_;
+  std::wstring file_filter_;
+  bool allow_select_multi_file_;
 
 public:
   STDMETHOD(ShowDialog)(BYTE* result);
   STDMETHOD(get_FileFilter)(BSTR* pVal);
   STDMETHOD(put_FileFilter)(BSTR newVal);
+  STDMETHOD(get_AllowMultiSelect)(BYTE* pVal);
+  STDMETHOD(put_AllowMultiSelect)(BYTE newVal);
+  STDMETHOD(ShowFolder)(BYTE* result);
+  STDMETHOD(GetSelectedFiles)(IDispatch** result);
+  STDMETHOD(GetClipboardFiles)(IDispatch** result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Partition), CPartition)

@@ -15,6 +15,7 @@
 #include <string>
 #include <windows.h>
 #include <algorithm>
+#include <functional>
 
 namespace ult {
   
@@ -35,7 +36,7 @@ inline std::wstring MD5String(const std::string& str) {
   return ult::AnsiToUnicode(hex_output);
 }
 
-inline std::wstring MD5File(const std::wstring& file_name) {
+inline std::wstring MD5File(const std::wstring& file_name, const std::function<void(ULONGLONG, ULONGLONG)> OnWorking) {
   ult::FileMap file_map;
   if (!file_map.Open(file_name)) {
     return L"";
@@ -58,7 +59,10 @@ inline std::wstring MD5File(const std::wstring& file_name) {
   SYSTEM_INFO sys_info;
   ::GetSystemInfo(&sys_info);
   DWORD glt = sys_info.dwAllocationGranularity;
-  DWORD map_size = 0xffffffff - 0xffffffff % glt;
+  //将一次映射大小调小，计算进度更为顺滑
+  //DWORD map_size = 0xffffffff - 0xffffffff % glt;
+  DWORD map_size = 16 * 1024 * 1024;
+  map_size -= map_size % glt;
   //main loop to read file from map view
   while (cursor < file_size) {
     //first part try and last part may trigger this
@@ -88,6 +92,9 @@ inline std::wstring MD5File(const std::wstring& file_name) {
     if (file_view != NULL) {
       md5_append(&state, (const md5_byte_t*)file_view, map_size);
       cursor += map_size;
+      if (OnWorking != nullptr) {
+        OnWorking(cursor, file_size);
+      }
     } else {
       return L"";
     }

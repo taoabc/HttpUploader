@@ -47,6 +47,12 @@
     <ClCompile Include="Partition.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\depend\include\ult\encrypt\md5.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HttpUploader_i.h">
@@ -81,6 +87,12 @@
     </ClInclude>
     <ClInclude Include="Partition.h">
       <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\depend\include\ult\encrypt\md5.h">
+      <Filter>Support</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

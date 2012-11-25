@@ -12,16 +12,64 @@
       }
       function ClearOutput() {
         var e = document.getElementById("output");
-        e.value = ""
+        e.value = "";
       }
       function InitPlugin() {
       }
       function ShowDialog() {
-        Partition.FileFilter = "asdf"
+        Partition.FileFilter = "pdf,exe,rar,zip"
+        Partition.AllowMultiSelect = 1
         if (!Partition.ShowDialog()) {
-        alert("not show dialog");
+          alert("show dialog failed");
+        }
+      }
+      function GetSelectedFiles() {
+        var list = Partition.GetSelectedFiles();
+        for (var i = list.lbound(1); i <= list.ubound(1); ++i) {
+          AppendOutput(list.getItem(i));
+        }
+      }
+      function ShowFolder() {
+        var ret = Partition.ShowFolder();
+        if (ret == null) {
+          alert("ret null");
+        }
+        if (ret == false) {
+          alert("ret false");
+        }
+        if (ret == 0) {
+          alert("ret 0");
+        }
+      }
+      function GetClipboardFiles() {
+        var list = Partition.GetClipboardFiles();
+        for (var i = list.lbound(1); i <= list.ubound(1); ++i) {
+          AppendOutput(list.getItem(i));
+        }
+      }
+      function CalcMd5() {
+        var list = Partition.GetSelectedFiles();
+        var ubound = list.ubound(1);
+        if (ubound == null) {
+          alert("请选择文件");
         } else {
-          alert("show dialog");
+          Uploader.Object = Test;
+          Uploader.OnStateChanged = JsOnStateChange
+          Uploader.LocalFile = list.getItem(0);
+          Uploader.CheckFile()
+        }
+      }
+      function Test() {
+      }
+      function JsOnStateChange(a, state) {
+        AppendOutput("state change " + state);
+        switch (state) {
+        case 6:
+          AppendOutput("md5 percent: " + Uploader.Md5Percent)
+          break;
+        case 7:
+          AppendOutput("md5: " + Uploader.MD5)
+          break;
         }
       }
       function Test() {
@@ -32,9 +80,10 @@
   
   <body onload="javascript:InitPlugin()">
     <button OnClick="javascript:ShowDialog()" style="top:0;">ShowDialog</button>
-    <button OnClick="javascript:CalcAllFileMd5()">Calc All</button>
-    <button Onclick="javascript:PostAllFile()">Post All</button>
-    <button OnClick="javascript:StopPost()">Stop Post</button>
+    <button OnClick="javascript:ShowFolder()">ShowFolder</button>
+    <button OnClick="javascript:GetSelectedFiles()">GetSelectedFiles</button>
+    <button OnClick="javascript:GetClipboardFiles()">GetClipboardFiles</button>
+    <button OnClick="javascript:CalcMd5()">CalcMd5</button>
     <button OnClick="javascript:PostResumeFile()">Post Resume File</button>
     <button OnClick="javascript:ClearOutput()" style="">ClearOutput</button>
     <button OnClick="javascript:Test()">Test</button>

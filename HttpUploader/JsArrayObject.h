@@ -8,7 +8,6 @@
 #include <atlcoll.h>
 using namespace ATL;
 
-template<typename T, VARTYPE VT>
 class JsArrayObject : public IDispatch {
 
 public:
@@ -58,10 +57,16 @@ public:
   //js can call these functions
   STDMETHODIMP GetIDsOfNames(REFIID riid, LPOLESTR *rgsz_names, UINT cnames,
       LCID lcid, DISPID *rgdispid) {
-    if (wcscmp(rgsz_names[0], L"Size") == 0) {
+    if (0 == wcscmp(rgsz_names[0], L"Size")) {
       *rgdispid = 1;
-    } else if (wcscmp(rgsz_names[0], L"At") == 0) {
+    } else if (0 == wcscmp(rgsz_names[0], L"At")) {
       *rgdispid = 2;
+    } else if (0 == wcscmp(rgsz_names[0], L"lbound")) {
+      *rgdispid = 3;
+    } else if (0 == wcscmp(rgsz_names[0], L"ubound")) {
+      *rgdispid = 4;
+    } else if (0 == wcscmp(rgsz_names[0], L"getItem")) {
+      *rgdispid = 5;
     } else {
       return E_FAIL;
     }
@@ -76,7 +81,14 @@ public:
       pvar_result->intVal = Size();
       break;
     case 2:
-      GetArrayAt(pdisp_params->rgvarg[0].lVal, pvar_result);
+    case 5:
+      return GetArrayAt(pdisp_params->rgvarg[0].ulVal, pvar_result);
+      break;
+    case 3:
+      return LBound(pdisp_params->rgvarg[0].ulVal, pvar_result);
+      break;
+    case 4:
+      return UBound(pdisp_params->rgvarg[0].ulVal, pvar_result);
       break;
     default:
       break;
@@ -84,11 +96,11 @@ public:
     return S_OK;
   }
   //public function
-  void PushBack(const T& v) {
+  void PushBack(const CComVariant& v) {
     array_.Add(v);
   }
 
-  T At(size_t idx) const {
+  CComVariant At(size_t idx) const {
     return array_.GetAt(idx);
   }
 
@@ -106,12 +118,38 @@ public:
 
 private:
 
+  HRESULT LBound(ULONG dimension, VARIANT* result) {
+    //暂不支持多维
+    if (dimension != 1) {
+      result->vt = VT_NULL;
+      return E_FAIL;
+    }
+    result->ulVal = 0;
+    result->vt = VT_UINT;
+    return S_OK;
+  }
+
+  HRESULT UBound(ULONG dimension, VARIANT* result) {
+    //暂不支持多维
+    if (dimension != 1) {
+      result->vt = VT_NULL;
+      return E_FAIL;
+    }
+    //上限索引为大小-1
+    if (Size() == 0) {
+      result->vt = VT_NULL;
+    } else {
+      result->ulVal = Size()-1;
+      result->vt = VT_UINT;
+    }
+    return S_OK;
+  }
+
   HRESULT GetArrayAt(size_t idx, VARIANT* result) {
     CComVariant vat(array_.GetAt(idx));
-    vat.ChangeType(VT);
     return vat.Detach(result);
   }
 
   ULONG cref_;
-  CAtlArray<T> array_;
+  CAtlArray<CComVariant> array_;
 };

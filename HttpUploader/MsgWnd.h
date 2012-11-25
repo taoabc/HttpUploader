@@ -10,26 +10,8 @@
 
 #include <string>
 
-#define UM_MD5GETTED                   WM_USER + 1
-#define UM_STATECHANGED                WM_USER + 2
-#define UM_POST                        WM_USER + 3
-
-struct Md5GettedParam {
-  ULONG id;
-  std::wstring md5;
-};
-
-struct StateChangedParam {
-  ULONG id;
-  LONG state;
-};
-
-struct PostParam {
-  ULONG id;
-  ULONGLONG speed;
-  ULONGLONG posted;
-  USHORT percent;
-};
+#define UM_CALCMD5                     WM_USER + 1
+#define UM_CALCMD5_COMPLETE            WM_USER + 2
 
 class CUploader;
 
@@ -41,9 +23,8 @@ public:
   DECLARE_WND_CLASS(L"HttpUploader MsgWnd")
 
   BEGIN_MSG_MAP(MsgWnd)
-    MESSAGE_HANDLER(UM_MD5GETTED, OnCalcMd5)
-    MESSAGE_HANDLER(UM_POST, OnPost)
-    MESSAGE_HANDLER(UM_STATECHANGED, OnStateChanged)
+    MESSAGE_HANDLER(UM_CALCMD5, OnCalcMd5)
+    MESSAGE_HANDLER(UM_CALCMD5_COMPLETE, OnCalcMd5Completed)
   END_MSG_MAP()
 
   MsgWnd(void);
@@ -51,9 +32,21 @@ public:
 
 private:
 
+  enum {
+    kStateLeisure        = 0,
+    kStateUploading      = 1,
+    kStateStop           = 2,
+    kStateUploadComplate = 3,
+    kStateError          = 4,
+    kStateConnected      = 5,
+    kStateMd5Working     = 6,
+    kStateMd5Complete    = 7,
+  };
+
   CUploader* GetUploader(void);
-  
+
+  void SetUploaderState(LONG state);
+
   LRESULT OnCalcMd5(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
-  LRESULT OnPost(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
-  LRESULT OnStateChanged(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
+  LRESULT OnCalcMd5Completed(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
 };
