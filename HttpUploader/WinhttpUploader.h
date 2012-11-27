@@ -19,7 +19,7 @@ public:
 
   void AddField(const std::wstring& field, const char* data, DWORD len);
   int BeginPost(const std::wstring& url, const std::wstring& filename,
-      DWORD sendsize, const std::wstring& field=L"file");
+      ULONGLONG sendsize, const std::wstring& field=L"file");
   HRESULT PostFile(const void* data, DWORD len);
   HRESULT EndPost(void);
 
@@ -37,4 +37,5 @@ private:
   std::string postend_;
   
   static const std::string kLineEnd_;
+  static const std::wstring kLineEndW_;
 };

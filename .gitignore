@@ -1,4 +1,12 @@
 #################
+## Mine
+#################
+/demo/pack/setup.inf
+/demo/pack/setup.rpt
+/demo/pack/HttpUploader.dll
+/demo/pack/cab/
+
+#################
 ## Eclipse
 #################
 

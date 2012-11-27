@@ -10,8 +10,7 @@
 
 #include <string>
 
-#define UM_CALCMD5                     WM_USER + 1
-#define UM_CALCMD5_COMPLETE            WM_USER + 2
+#define UM_STATE_CHANGE                             WM_USER + 1
 
 class CUploader;
 
@@ -23,30 +22,26 @@ public:
   DECLARE_WND_CLASS(L"HttpUploader MsgWnd")
 
   BEGIN_MSG_MAP(MsgWnd)
-    MESSAGE_HANDLER(UM_CALCMD5, OnCalcMd5)
-    MESSAGE_HANDLER(UM_CALCMD5_COMPLETE, OnCalcMd5Completed)
+    MESSAGE_HANDLER(UM_STATE_CHANGE, OnStateChange)
+    MESSAGE_HANDLER(WM_TIMER, OnTimer)
   END_MSG_MAP()
 
   MsgWnd(void);
   ~MsgWnd(void);
 
+  bool SetPostTimer(void);
+  bool KillPostTimer(void);
+
 private:
 
-  enum {
-    kStateLeisure        = 0,
-    kStateUploading      = 1,
-    kStateStop           = 2,
-    kStateUploadComplate = 3,
-    kStateError          = 4,
-    kStateConnected      = 5,
-    kStateMd5Working     = 6,
-    kStateMd5Complete    = 7,
-  };
-
   CUploader* GetUploader(void);
-
   void SetUploaderState(LONG state);
+  UINT_PTR GetUniqueId(void);
 
-  LRESULT OnCalcMd5(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
-  LRESULT OnCalcMd5Completed(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
+  LRESULT OnStateChange(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
+  LRESULT OnTimer(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
+
+  UINT_PTR post_timer_;
+
+  static const UINT kCheckPostInteval_ = 1000;
 };

@@ -3,8 +3,10 @@
 
 #include "ult/string-operate.h"
 #include "ult/file-dir.h"
+#include "Utility.h"
 
 const std::string WinhttpUploader::kLineEnd_ = "\r\n";
+const std::wstring WinhttpUploader::kLineEndW_ = L"\r\n";
 
 WinhttpUploader::WinhttpUploader(void) {
   InitBoundary();
@@ -58,12 +60,12 @@ void WinhttpUploader::AddField(const std::wstring& field, const char* data, DWOR
 }
 
 int WinhttpUploader::BeginPost(const std::wstring& url, const std::wstring& filename,
-                               DWORD sendsize, const std::wstring& field) {
+                               ULONGLONG sendsize, const std::wstring& field) {
   int ret = InitRequest(url);
   if (ret != ult::HttpStatus::kSuccess) {
     return ret;
   }
-  std::wstring header = L"Content-Type: multipart/form-data; boundary=" + wboundary_;
+  std::wstring header = L"Content-Type: multipart/form-data; boundary=" + wboundary_ + kLineEndW_;
   std::string postbegin;
   //biuld begin
   postbegin = "--" + aboundary_ + kLineEnd_ + "Content-Disposition: form-data; name=\"";
@@ -77,7 +79,22 @@ int WinhttpUploader::BeginPost(const std::wstring& url, const std::wstring& file
   UINT64 total_size = sendsize + sendfield_.length() + postbegin.length() + postend_.length();
   total_size = total_size > 0xffffffff ? 0xffffffff : total_size;
   HRESULT hr;
-  hr = SendRequest(header.c_str(), -1L, NULL, 0, (DWORD)total_size);
+  DWORD shell_version = ult::GetShellVersion();
+  WORD major_version = HIWORD(shell_version);
+  WORD minor_version = LOWORD(shell_version);
+  //vista+
+  if (major_version >= 6) {
+    header += L"Content-Length: ";
+    std::wstring str_total_size = ult::UIntToString(total_size);
+    header += str_total_size + kLineEndW_;
+    hr = SendRequest(header.c_str(), -1L, NULL, 0, WINHTTP_IGNORE_REQUEST_TOTAL_LENGTH);
+  //xp
+  } else if (major_version == 5) {
+    if (total_size > 0xffffffff) {
+      return ult::HttpStatus::kUnknownError;
+    }
+    hr = SendRequest(header.c_str(), -1L, NULL, 0, (DWORD)total_size);
+  }
   if (FAILED(hr)) {
     return ult::HttpStatus::kSendRequestError;
   }

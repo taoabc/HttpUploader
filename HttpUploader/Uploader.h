@@ -20,6 +20,24 @@ using namespace ATL;
 
 #include <boost/thread.hpp>
 
+struct PostField {
+  std::wstring key;
+  std::wstring value;
+};
+
+namespace state {
+enum {
+  kStateLeisure        = 0,
+  kStateUploading      = 1,
+  kStateStop           = 2,
+  kStateUploadComplete = 3,
+  kStateError          = 4,
+  kStateConnected      = 5,
+  kStateMd5Working     = 6,
+  kStateMd5Complete    = 7,
+};
+}
+
 // CUploader
 
 class ATL_NO_VTABLE CUploader :
@@ -55,6 +73,7 @@ END_COM_MAP()
 public:
 
   void SetState(LONG state);
+  void OnPostTimer(void);
 
 private:
 
@@ -77,15 +96,22 @@ private:
   ULONGLONG posted_length_;
   ULONGLONG file_size_limit_;
   ULONGLONG range_size_;
+  ULONGLONG file_size_;
   USHORT md5_percent_;
+
+  DWORD begin_post_time_;
+  ULONGLONG begin_post_cursor_;
 
   CComQIPtr<IDispatch> object_;
   CComQIPtr<IDispatch> on_post_;
   CComQIPtr<IDispatch> on_state_changed_;
 
   MsgWnd msgwnd_;
+  std::vector<PostField> post_fields_;
+  bool stop_;
 
   boost::mutex mutex_calcmd5_;
+  boost::mutex mutex_uploader_;
 
 public:
 

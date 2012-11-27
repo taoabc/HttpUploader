@@ -59,16 +59,31 @@
           Uploader.CheckFile()
         }
       }
-      function Test() {
+      function Post() {
+        var list = Partition.GetSelectedFiles();
+        var ubound = list.ubound(1);
+        if (ubound == null) {
+          alert("请选择文件");
+        } else {
+          Uploader.Object = Test;
+          Uploader.OnStateChanged = JsOnStateChange;
+          Uploader.OnPost = JsOnPost;
+          Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php"
+          Uploader.LocalFile = list.getItem(0);
+          Uploader.Post()
+        }
+      }
+      function JsOnPost(obj, speed, posted, percent, time) {
+        AppendOutput("speed " + speed + " posted " + posted + " percent " + percent + " time " + time);
       }
       function JsOnStateChange(a, state) {
         AppendOutput("state change " + state);
         switch (state) {
         case 6:
-          AppendOutput("md5 percent: " + Uploader.Md5Percent)
+          AppendOutput("md5 percent: " + Uploader.Md5Percent);
           break;
         case 7:
-          AppendOutput("md5: " + Uploader.MD5)
+          AppendOutput("md5: " + Uploader.MD5);
           break;
         }
       }
@@ -84,8 +99,7 @@
     <button OnClick="javascript:GetSelectedFiles()">GetSelectedFiles</button>
     <button OnClick="javascript:GetClipboardFiles()">GetClipboardFiles</button>
     <button OnClick="javascript:CalcMd5()">CalcMd5</button>
-    <button OnClick="javascript:PostResumeFile()">Post Resume File</button>
-    <button OnClick="javascript:ClearOutput()" style="">ClearOutput</button>
+    <button OnClick="javascript:Post()">Post</button
     <button OnClick="javascript:Test()">Test</button>
     <p />
     <textarea id="output" style="margin-top:20px;width:80%;height:300px;"></textarea>
