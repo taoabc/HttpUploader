@@ -68,6 +68,7 @@
           Uploader.Object = Test;
           Uploader.OnStateChanged = JsOnStateChange;
           Uploader.OnPost = JsOnPost;
+          Uploader.AddField("md5", "125125245");
           Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php"
           Uploader.LocalFile = list.getItem(0);
           Uploader.Post()

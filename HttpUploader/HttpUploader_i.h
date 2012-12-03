@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Mon Dec 03 19:57:05 2012
+/* at Mon Dec 03 20:44:13 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -174,7 +174,7 @@ EXTERN_C const IID IID_IUploader;
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE AddField( 
             /* [in] */ BSTR key,
             /* [in] */ BSTR value,
-            BYTE *result) = 0;
+            /* [retval][out] */ BYTE *result) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE Post( 
             /* [retval][out] */ BYTE *result) = 0;
@@ -199,6 +199,9 @@ EXTERN_C const IID IID_IUploader;
         
         virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_FileSize( 
             /* [retval][out] */ ULONGLONG *pVal) = 0;
+        
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_ErrorMsg( 
+            /* [retval][out] */ BSTR *pVal) = 0;
         
     };
     
@@ -341,7 +344,7 @@ EXTERN_C const IID IID_IUploader;
             IUploader * This,
             /* [in] */ BSTR key,
             /* [in] */ BSTR value,
-            BYTE *result);
+            /* [retval][out] */ BYTE *result);
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *Post )( 
             IUploader * This,
@@ -374,6 +377,10 @@ EXTERN_C const IID IID_IUploader;
         /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_FileSize )( 
             IUploader * This,
             /* [retval][out] */ ULONGLONG *pVal);
+        
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_ErrorMsg )( 
+            IUploader * This,
+            /* [retval][out] */ BSTR *pVal);
         
         END_INTERFACE
     } IUploaderVtbl;
@@ -503,6 +510,9 @@ EXTERN_C const IID IID_IUploader;
 
 #define IUploader_get_FileSize(This,pVal)	\
     ( (This)->lpVtbl -> get_FileSize(This,pVal) ) 
+
+#define IUploader_get_ErrorMsg(This,pVal)	\
+    ( (This)->lpVtbl -> get_ErrorMsg(This,pVal) ) 
 
 #endif /* COBJMACROS */
 

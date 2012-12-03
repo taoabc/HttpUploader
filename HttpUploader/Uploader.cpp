@@ -270,15 +270,9 @@ void CUploader::DoPost( void ) {
     std::string uvalue = ult::UnicodeToUtf8(field.value);
     uploader.AddField(field.key, uvalue.c_str(), uvalue.length());
   }
-  ult::File f;
-  if (!f.Open(local_file_)) {
-    error_msg_ = L"无法打开指定文件";
-    msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
-    return;
-  }
+  ULONGLONG filesize = file_size_;
   boost::filesystem::path file(local_file_);
   std::wstring name = file.filename().wstring();
-  ULONGLONG filesize = f.GetSize();
   if (posted_length_ >= filesize) {
     error_msg_ = L"续传位置超过或等于文件大小";
     msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
@@ -287,6 +281,7 @@ void CUploader::DoPost( void ) {
   ULONGLONG sendsize = filesize - posted_length_;
   int ret = uploader.BeginPost(post_url_, name, sendsize);
   if (ret != ult::HttpStatus::kSuccess) {
+    error_msg_ = L"连接服务器错误";
     msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
     return;
   }
@@ -300,12 +295,19 @@ void CUploader::DoPost( void ) {
   ULONGLONG new_pos;
   DWORD buf_len = (DWORD)range_size_; // set buffer 128K
   char* buffer = new char[buf_len];
+  ult::File f;
+  if (!f.Open(local_file_)) {
+    error_msg_ = L"无法打开指定文件";
+    msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
+    return;
+  }
   f.Seek(posted_length_, &new_pos);
   bool isok = true;
   LONG last_state = 0;
   while (posted_length_ < filesize) {
     if (stop_) {
       isok = false;
+      error_msg_ = L"上传被手动停止";
       last_state = state::kStateStop;
       break;
     }
@@ -313,12 +315,14 @@ void CUploader::DoPost( void ) {
     f.Read(buffer, write, &readed);
     if (readed != write) {
       isok = false;
+      error_msg_ = L"读取文件错误";
       last_state = state::kStateError;
       break;
     }
     hr = uploader.WriteData(buffer, readed);
     if (FAILED(hr)) {
       isok = false;
+      error_msg_ = L"POST过程中发生错误";
       last_state = state::kStateError;
       break;
     }
@@ -332,6 +336,7 @@ void CUploader::DoPost( void ) {
   }
   hr = uploader.EndPost();
   if (FAILED(hr)) {
+    error_msg_ = L"结束传输过程中发生错误";
     msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
     return;
   }

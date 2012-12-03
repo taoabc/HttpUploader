@@ -37,7 +37,7 @@ interface IUploader : IDispatch{
   [propget, id(11)] HRESULT FileID([out, retval] ULONG* pVal);
   [propput, id(11)] HRESULT FileID([in] ULONG newVal);
   [id(12)] HRESULT ClearFields([out,retval] BYTE* result);
-  [id(13)] HRESULT AddField([in] BSTR key, [in] BSTR value, BYTE* result);
+  [id(13)] HRESULT AddField([in] BSTR key, [in] BSTR value, [out, retval] BYTE* result);
   [id(14)] HRESULT Post([out,retval] BYTE* result);
   [id(15)] HRESULT CheckFile([out,retval] BYTE* result);
   [id(16)] HRESULT Stop([out,retval] BYTE* result);
