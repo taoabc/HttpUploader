@@ -285,10 +285,6 @@ void CUploader::DoPost( void ) {
     return;
   }
   ULONGLONG sendsize = filesize - posted_length_;
-  if (sendsize > 0xfffff000) {
-    msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
-    return;
-  }
   int ret = uploader.BeginPost(post_url_, name, sendsize);
   if (ret != ult::HttpStatus::kSuccess) {
     msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
