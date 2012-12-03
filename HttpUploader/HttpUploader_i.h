@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Fri Nov 30 17:36:59 2012
+/* at Sat Dec 01 11:21:46 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -108,9 +108,6 @@ EXTERN_C const IID IID_IUploader;
         virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_MD5( 
             /* [retval][out] */ BSTR *pVal) = 0;
         
-        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_MD5( 
-            /* [in] */ BSTR newVal) = 0;
-        
         virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_PostedLength( 
             /* [retval][out] */ ULONGLONG *pVal) = 0;
         
@@ -172,20 +169,21 @@ EXTERN_C const IID IID_IUploader;
             /* [in] */ ULONG newVal) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE ClearFields( 
-            /* [retval][out] */ LONG *result) = 0;
+            /* [retval][out] */ BYTE *result) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE AddField( 
             /* [in] */ BSTR key,
-            /* [in] */ BSTR value) = 0;
+            /* [in] */ BSTR value,
+            BYTE *result) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE Post( 
-            /* [retval][out] */ LONG *result) = 0;
+            /* [retval][out] */ BYTE *result) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE CheckFile( 
-            /* [retval][out] */ LONG *result) = 0;
+            /* [retval][out] */ BYTE *result) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE Stop( 
-            /* [retval][out] */ LONG *result) = 0;
+            /* [retval][out] */ BYTE *result) = 0;
         
         virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_Object( 
             /* [retval][out] */ IDispatch **pVal) = 0;
@@ -196,8 +194,8 @@ EXTERN_C const IID IID_IUploader;
         virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_Md5Percent( 
             /* [retval][out] */ USHORT *pVal) = 0;
         
-        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_Md5Percent( 
-            /* [in] */ USHORT newVal) = 0;
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_ErrorCode( 
+            /* [retval][out] */ LONG *pVal) = 0;
         
     };
     
@@ -251,10 +249,6 @@ EXTERN_C const IID IID_IUploader;
         /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_MD5 )( 
             IUploader * This,
             /* [retval][out] */ BSTR *pVal);
-        
-        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_MD5 )( 
-            IUploader * This,
-            /* [in] */ BSTR newVal);
         
         /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_PostedLength )( 
             IUploader * This,
@@ -338,24 +332,25 @@ EXTERN_C const IID IID_IUploader;
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *ClearFields )( 
             IUploader * This,
-            /* [retval][out] */ LONG *result);
+            /* [retval][out] */ BYTE *result);
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *AddField )( 
             IUploader * This,
             /* [in] */ BSTR key,
-            /* [in] */ BSTR value);
+            /* [in] */ BSTR value,
+            BYTE *result);
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *Post )( 
             IUploader * This,
-            /* [retval][out] */ LONG *result);
+            /* [retval][out] */ BYTE *result);
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *CheckFile )( 
             IUploader * This,
-            /* [retval][out] */ LONG *result);
+            /* [retval][out] */ BYTE *result);
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *Stop )( 
             IUploader * This,
-            /* [retval][out] */ LONG *result);
+            /* [retval][out] */ BYTE *result);
         
         /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Object )( 
             IUploader * This,
@@ -369,9 +364,9 @@ EXTERN_C const IID IID_IUploader;
             IUploader * This,
             /* [retval][out] */ USHORT *pVal);
         
-        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Md5Percent )( 
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_ErrorCode )( 
             IUploader * This,
-            /* [in] */ USHORT newVal);
+            /* [retval][out] */ LONG *pVal);
         
         END_INTERFACE
     } IUploaderVtbl;
@@ -411,9 +406,6 @@ EXTERN_C const IID IID_IUploader;
 
 #define IUploader_get_MD5(This,pVal)	\
     ( (This)->lpVtbl -> get_MD5(This,pVal) ) 
-
-#define IUploader_put_MD5(This,newVal)	\
-    ( (This)->lpVtbl -> put_MD5(This,newVal) ) 
 
 #define IUploader_get_PostedLength(This,pVal)	\
     ( (This)->lpVtbl -> get_PostedLength(This,pVal) ) 
@@ -478,8 +470,8 @@ EXTERN_C const IID IID_IUploader;
 #define IUploader_ClearFields(This,result)	\
     ( (This)->lpVtbl -> ClearFields(This,result) ) 
 
-#define IUploader_AddField(This,key,value)	\
-    ( (This)->lpVtbl -> AddField(This,key,value) ) 
+#define IUploader_AddField(This,key,value,result)	\
+    ( (This)->lpVtbl -> AddField(This,key,value,result) ) 
 
 #define IUploader_Post(This,result)	\
     ( (This)->lpVtbl -> Post(This,result) ) 
@@ -499,8 +491,8 @@ EXTERN_C const IID IID_IUploader;
 #define IUploader_get_Md5Percent(This,pVal)	\
     ( (This)->lpVtbl -> get_Md5Percent(This,pVal) ) 
 
-#define IUploader_put_Md5Percent(This,newVal)	\
-    ( (This)->lpVtbl -> put_Md5Percent(This,newVal) ) 
+#define IUploader_get_ErrorCode(This,pVal)	\
+    ( (This)->lpVtbl -> get_ErrorCode(This,pVal) ) 
 
 #endif /* COBJMACROS */
 

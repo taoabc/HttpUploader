@@ -98,6 +98,7 @@ private:
   ULONGLONG range_size_;
   ULONGLONG file_size_;
   USHORT md5_percent_;
+  LONG error_code_;
 
   DWORD begin_post_time_;
   ULONGLONG begin_post_cursor_;
@@ -119,7 +120,6 @@ public:
   STDMETHOD(SetSite)(IUnknown* punksite);
 
   STDMETHOD(get_MD5)(BSTR* pVal);
-  STDMETHOD(put_MD5)(BSTR newVal);
   STDMETHOD(get_PostedLength)(ULONGLONG* pVal);
   STDMETHOD(put_PostedLength)(ULONGLONG newVal);
   STDMETHOD(get_PostUrl)(BSTR* pVal);
@@ -140,15 +140,15 @@ public:
   STDMETHOD(put_CompanyLicensed)(BSTR newVal);
   STDMETHOD(get_FileID)(ULONG* pVal);
   STDMETHOD(put_FileID)(ULONG newVal);
-  STDMETHOD(ClearFields)(LONG* result);
-  STDMETHOD(AddField)(BSTR key, BSTR value);
-  STDMETHOD(Post)(LONG* result);
-  STDMETHOD(CheckFile)(LONG* result);
-  STDMETHOD(Stop)(LONG* result);
+  STDMETHOD(ClearFields)(BYTE* result);
+  STDMETHOD(AddField)(BSTR key, BSTR value, BYTE* result);
+  STDMETHOD(Post)(BYTE* result);
+  STDMETHOD(CheckFile)(BYTE* result);
+  STDMETHOD(Stop)(BYTE* result);
   STDMETHOD(get_Object)(IDispatch** pVal);
   STDMETHOD(put_Object)(IDispatch* newVal);
   STDMETHOD(get_Md5Percent)(USHORT* pVal);
-  STDMETHOD(put_Md5Percent)(USHORT newVal);
+  STDMETHOD(get_ErrorCode)(LONG* pVal);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)

@@ -16,7 +16,6 @@ import "ocidl.idl";
 ]
 interface IUploader : IDispatch{
   [propget, id(1)] HRESULT MD5([out, retval] BSTR* pVal);
-  [propput, id(1)] HRESULT MD5([in] BSTR newVal);
   [propget, id(2)] HRESULT PostedLength([out, retval] ULONGLONG* pVal);
   [propput, id(2)] HRESULT PostedLength([in] ULONGLONG newVal);
   [propget, id(3)] HRESULT PostUrl([out, retval] BSTR* pVal);
@@ -37,15 +36,15 @@ interface IUploader : IDispatch{
   [propput, id(10)] HRESULT CompanyLicensed([in] BSTR newVal);
   [propget, id(11)] HRESULT FileID([out, retval] ULONG* pVal);
   [propput, id(11)] HRESULT FileID([in] ULONG newVal);
-  [id(12)] HRESULT ClearFields([out,retval] LONG* result);
-  [id(13)] HRESULT AddField([in] BSTR key, [in] BSTR value);
-  [id(14)] HRESULT Post([out,retval] LONG* result);
-  [id(15)] HRESULT CheckFile([out,retval] LONG* result);
-  [id(16)] HRESULT Stop([out,retval] LONG* result);
+  [id(12)] HRESULT ClearFields([out,retval] BYTE* result);
+  [id(13)] HRESULT AddField([in] BSTR key, [in] BSTR value, BYTE* result);
+  [id(14)] HRESULT Post([out,retval] BYTE* result);
+  [id(15)] HRESULT CheckFile([out,retval] BYTE* result);
+  [id(16)] HRESULT Stop([out,retval] BYTE* result);
   [propget, id(17)] HRESULT Object([out, retval] IDispatch** pVal);
   [propput, id(17)] HRESULT Object([in] IDispatch* newVal);
   [propget, id(18)] HRESULT Md5Percent([out, retval] USHORT* pVal);
-  [propput, id(18)] HRESULT Md5Percent([in] USHORT newVal);
+  [propget, id(19)] HRESULT ErrorCode([out, retval] LONG* pVal);
 };
 [
 	object,

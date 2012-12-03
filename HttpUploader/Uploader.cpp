@@ -42,12 +42,6 @@ STDMETHODIMP CUploader::get_MD5(BSTR* pVal) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::put_MD5(BSTR newVal) {
-  // TODO: Add your implementation code here
-  md5_.assign(newVal, ::SysStringLen(newVal));
-  return S_OK;
-}
-
 STDMETHODIMP CUploader::get_PostedLength(ULONGLONG* pVal) {
   // TODO: Add your implementation code here
   *pVal = posted_length_;
@@ -181,48 +175,52 @@ STDMETHODIMP CUploader::put_Object(IDispatch* newVal) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::ClearFields(LONG* result) {
+STDMETHODIMP CUploader::ClearFields( BYTE* result )
+{
   // TODO: Add your implementation code here
   post_fields_.clear();
+  *result = (BYTE)-1;
   return S_OK;
 }
 
-STDMETHODIMP CUploader::AddField(BSTR key, BSTR value) {
+STDMETHODIMP CUploader::AddField(BSTR key, BSTR value, BYTE* result) {
   // TODO: Add your implementation code here
   PostField field;
   field.key.assign(key, ::SysStringLen(key));
   field.value.assign(value, ::SysStringLen(value));
   post_fields_.push_back(field);
+  *result = (BYTE)-1;
   return S_OK;
 }
 
-STDMETHODIMP CUploader::Post(LONG* result) {
+STDMETHODIMP CUploader::Post(BYTE* result) {
   // TODO: Add your implementation code here
   if (local_file_.empty() || post_url_.empty()) {
     *result = 0;
   } else {
     boost::thread t(std::bind(&CUploader::DoPost, this));
     t.detach();
-    *result = 1;
+    *result = (BYTE)-1;
   }
   return S_OK;
 }
 
-STDMETHODIMP CUploader::CheckFile(LONG* result) {
+STDMETHODIMP CUploader::CheckFile(BYTE* result) {
   // TODO: Add your implementation code here
   if (local_file_.empty()) {
     *result = 0;
   } else {
     boost::thread t(std::bind(&CUploader::CalcMd5, this, local_file_));
     t.detach();
-    *result = 1;
+    *result = (BYTE)-1;
   }
   return S_OK;
 }
 
-STDMETHODIMP CUploader::Stop(LONG* result) {
+STDMETHODIMP CUploader::Stop(BYTE* result) {
   // TODO: Add your implementation code here
   stop_ = true;
+  *result = (BYTE)-1;
   return S_OK;
 }
 
@@ -250,12 +248,6 @@ void CUploader::CalcMd5( const std::wstring& file ) {
 STDMETHODIMP CUploader::get_Md5Percent(USHORT* pVal) {
   // TODO: Add your implementation code here
   *pVal = md5_percent_;
-  return S_OK;
-}
-
-STDMETHODIMP CUploader::put_Md5Percent(USHORT newVal) {
-  // TODO: Add your implementation code here
-  md5_percent_ = newVal;
   return S_OK;
 }
 
@@ -382,4 +374,10 @@ void CUploader::OnPostTimer( void ) {
   }
   oldtk = newtk;
   old_posted = new_posted;
+}
+
+STDMETHODIMP CUploader::get_ErrorCode(LONG* pVal) {
+  // TODO: Add your implementation code here
+  *pVal = error_code_;
+  return S_OK;
 }
