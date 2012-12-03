@@ -45,6 +45,8 @@ interface IUploader : IDispatch{
   [propput, id(17)] HRESULT Object([in] IDispatch* newVal);
   [propget, id(18)] HRESULT Md5Percent([out, retval] USHORT* pVal);
   [propget, id(19)] HRESULT ErrorCode([out, retval] LONG* pVal);
+  [propget, id(20)] HRESULT FileSize([out, retval] ULONGLONG* pVal);
+  [propget, id(21)] HRESULT ErrorMsg([out, retval] BSTR* pVal);
 };
 [
 	object,

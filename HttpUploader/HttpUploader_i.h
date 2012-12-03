@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Sat Dec 01 11:21:46 2012
+/* at Mon Dec 03 19:57:05 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -197,6 +197,9 @@ EXTERN_C const IID IID_IUploader;
         virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_ErrorCode( 
             /* [retval][out] */ LONG *pVal) = 0;
         
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_FileSize( 
+            /* [retval][out] */ ULONGLONG *pVal) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -368,6 +371,10 @@ EXTERN_C const IID IID_IUploader;
             IUploader * This,
             /* [retval][out] */ LONG *pVal);
         
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_FileSize )( 
+            IUploader * This,
+            /* [retval][out] */ ULONGLONG *pVal);
+        
         END_INTERFACE
     } IUploaderVtbl;
 
@@ -493,6 +500,9 @@ EXTERN_C const IID IID_IUploader;
 
 #define IUploader_get_ErrorCode(This,pVal)	\
     ( (This)->lpVtbl -> get_ErrorCode(This,pVal) ) 
+
+#define IUploader_get_FileSize(This,pVal)	\
+    ( (This)->lpVtbl -> get_FileSize(This,pVal) ) 
 
 #endif /* COBJMACROS */
 

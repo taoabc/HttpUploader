@@ -272,6 +272,7 @@ void CUploader::DoPost( void ) {
   }
   ult::File f;
   if (!f.Open(local_file_)) {
+    error_msg_ = L"无法打开指定文件";
     msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
     return;
   }
@@ -279,6 +280,7 @@ void CUploader::DoPost( void ) {
   std::wstring name = file.filename().wstring();
   ULONGLONG filesize = f.GetSize();
   if (posted_length_ >= filesize) {
+    error_msg_ = L"续传位置超过或等于文件大小";
     msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
     return;
   }
@@ -379,5 +381,17 @@ void CUploader::OnPostTimer( void ) {
 STDMETHODIMP CUploader::get_ErrorCode(LONG* pVal) {
   // TODO: Add your implementation code here
   *pVal = error_code_;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::get_FileSize(ULONGLONG* pVal) {
+  // TODO: Add your implementation code here
+  *pVal = file_size_;
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::get_ErrorMsg(BSTR* pVal) {
+  // TODO: Add your implementation code here
+  *pVal = ::SysAllocStringLen(error_msg_.c_str(), error_msg_.length());
   return S_OK;
 }

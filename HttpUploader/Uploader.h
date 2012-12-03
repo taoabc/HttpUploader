@@ -99,6 +99,7 @@ private:
   ULONGLONG file_size_;
   USHORT md5_percent_;
   LONG error_code_;
+  std::wstring error_msg_;
 
   DWORD begin_post_time_;
   ULONGLONG begin_post_cursor_;
@@ -149,6 +150,8 @@ public:
   STDMETHOD(put_Object)(IDispatch* newVal);
   STDMETHOD(get_Md5Percent)(USHORT* pVal);
   STDMETHOD(get_ErrorCode)(LONG* pVal);
+  STDMETHOD(get_FileSize)(ULONGLONG* pVal);
+  STDMETHOD(get_ErrorMsg)(BSTR* pVal);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)
