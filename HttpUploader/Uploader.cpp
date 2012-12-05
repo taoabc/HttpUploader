@@ -48,12 +48,6 @@ STDMETHODIMP CUploader::get_PostedLength(ULONGLONG* pVal) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::put_PostedLength(ULONGLONG newVal) {
-  // TODO: Add your implementation code here
-  posted_length_ = newVal;
-  return S_OK;
-}
-
 STDMETHODIMP CUploader::get_PostUrl(BSTR* pVal) {
   // TODO: Add your implementation code here
   *pVal = ::SysAllocStringLen(post_url_.c_str(), post_url_.length());
@@ -198,7 +192,7 @@ STDMETHODIMP CUploader::Post(BYTE* result) {
   if (local_file_.empty() || post_url_.empty()) {
     *result = 0;
   } else {
-    boost::thread t(std::bind(&CUploader::DoPost, this));
+    boost::thread t(std::bind(&CUploader::DoPost, this, 0));
     t.detach();
     *result = (BYTE)-1;
   }
@@ -263,7 +257,7 @@ void CUploader::SetState( LONG state ) {
   }
 }
 
-void CUploader::DoPost( void ) {
+void CUploader::DoPost( ULONGLONG start_pos ) {
   HRESULT hr;
   WinhttpUploader uploader;
   BOOST_FOREACH(PostField field, post_fields_) {
@@ -273,6 +267,7 @@ void CUploader::DoPost( void ) {
   ULONGLONG filesize = file_size_;
   boost::filesystem::path file(local_file_);
   std::wstring name = file.filename().wstring();
+  posted_length_ = start_pos;
   if (posted_length_ >= filesize) {
     error_msg_ = L"续传位置超过或等于文件大小";
     msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
@@ -394,5 +389,17 @@ STDMETHODIMP CUploader::get_FileSize(ULONGLONG* pVal) {
 STDMETHODIMP CUploader::get_ErrorMsg(BSTR* pVal) {
   // TODO: Add your implementation code here
   *pVal = ::SysAllocStringLen(error_msg_.c_str(), error_msg_.length());
+  return S_OK;
+}
+
+STDMETHODIMP CUploader::PostFromPosition(ULONGLONG position, BYTE* result) {
+  // TODO: Add your implementation code here
+  if (local_file_.empty() || post_url_.empty()) {
+    *result = 0;
+  } else {
+    boost::thread t(std::bind(&CUploader::DoPost, this, position));
+    t.detach();
+    *result = (BYTE)-1;
+  }
   return S_OK;
 }

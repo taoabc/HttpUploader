@@ -2,9 +2,11 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>plugin test</title>
-    <object id="Uploader" classid="clsid:7E406662-E762-45BE-9552-51D900C61A14" codebase="http://127.0.0.1/uploader/pack.cab#version=1,0,0,1"></object>
-    <object id="Partition" classid="clsid:DE4934DA-A37E-4E47-88A7-521DB39A5EE4"></object>
+    <!--<object id="Uploader" classid="clsid:7E406662-E762-45BE-9552-51D900C61A14" codebase="http://127.0.0.1/uploader/pack.cab#version=1,0,0,1"></object>-->
+    <!--<object id="Partition" classid="clsid:DE4934DA-A37E-4E47-88A7-521DB39A5EE4"></object>-->
     <script type="text/javascript">
+      var Uploader = new ActiveXObject("IBMUploader.Uploader");
+      var Partition = new ActiveXObject("IBMUploader.Partition");
       var g_filename;
       function AppendOutput(txt) {
         var e = document.getElementById("output");
@@ -74,6 +76,21 @@
           Uploader.Post()
         }
       }
+      function PostFromPosition() {
+        var list = Partition.GetSelectedFiles();
+        var ubound = list.ubound(1);
+        if (ubound == null) {
+          alert("请选择文件");
+        } else {
+          Uploader.Object = Test;
+          Uploader.OnStateChanged = JsOnStateChange;
+          Uploader.OnPost = JsOnPost;
+          Uploader.AddField("md5", "125125245");
+          Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php"
+          Uploader.LocalFile = list.getItem(0);
+          Uploader.PostFromPosition(1024);
+        }        
+      }
       function JsOnPost(obj, speed, posted, percent, time) {
         AppendOutput("speed " + speed + " posted " + posted + " percent " + percent + " time " + time);
       }
@@ -100,7 +117,8 @@
     <button OnClick="javascript:GetSelectedFiles()">GetSelectedFiles</button>
     <button OnClick="javascript:GetClipboardFiles()">GetClipboardFiles</button>
     <button OnClick="javascript:CalcMd5()">CalcMd5</button>
-    <button OnClick="javascript:Post()">Post</button
+    <button OnClick="javascript:Post()">Post</button>
+    <button Onclick="javascript:PostFromPosition()">PostFromPosition</button>
     <button OnClick="javascript:Test()">Test</button>
     <p />
     <textarea id="output" style="margin-top:20px;width:80%;height:300px;"></textarea>

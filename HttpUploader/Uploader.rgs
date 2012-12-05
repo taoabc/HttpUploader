@@ -1,19 +1,19 @@
 HKCR
 {
-	HttpUploader.Uploader.1 = s 'Uploader Class'
+	IBMUploader.Uploader.1 = s 'Uploader Class'
 	{
 		CLSID = s '{7E406662-E762-45BE-9552-51D900C61A14}'
 	}
-	HttpUploader.Uploader = s 'Uploader Class'
+	IBMUploader.Uploader = s 'Uploader Class'
 	{		
-		CurVer = s 'HttpUploader.Uploader.1'
+		CurVer = s 'IBMUploader.Uploader.1'
 	}
 	NoRemove CLSID
 	{
 		ForceRemove {7E406662-E762-45BE-9552-51D900C61A14} = s 'Uploader Class'
 		{
-			ProgID = s 'HttpUploader.Uploader.1'
-			VersionIndependentProgID = s 'HttpUploader.Uploader'
+			ProgID = s 'IBMUploader.Uploader.1'
+			VersionIndependentProgID = s 'IBMUploader.Uploader'
 			ForceRemove Programmable
 			InprocServer32 = s '%MODULE%'
 			{

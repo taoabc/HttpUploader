@@ -1,19 +1,19 @@
 HKCR
 {
-	HttpUploader.Partition.1 = s 'Partition Class'
+	IBMUploader.Partition.1 = s 'Partition Class'
 	{
 		CLSID = s '{DE4934DA-A37E-4E47-88A7-521DB39A5EE4}'
 	}
-	HttpUploader.Partition = s 'Partition Class'
+	IBMUploader.Partition = s 'Partition Class'
 	{		
-		CurVer = s 'HttpUploader.Partition.1'
+		CurVer = s 'IBMUploader.Partition.1'
 	}
 	NoRemove CLSID
 	{
 		ForceRemove {DE4934DA-A37E-4E47-88A7-521DB39A5EE4} = s 'Partition Class'
 		{
-			ProgID = s 'HttpUploader.Partition.1'
-			VersionIndependentProgID = s 'HttpUploader.Partition'
+			ProgID = s 'IBMUploader.Partition.1'
+			VersionIndependentProgID = s 'IBMUploader.Partition'
 			ForceRemove Programmable
 			InprocServer32 = s '%MODULE%'
 			{

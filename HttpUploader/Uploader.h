@@ -79,7 +79,7 @@ private:
 
   //目前作为线程使用，注意同步
   void CalcMd5(const std::wstring& file);
-  void DoPost(void);
+  void DoPost(ULONGLONG start_pos);
 
   //ie related
   CComQIPtr<IWebBrowser2> pwebbrowser_;
@@ -122,7 +122,6 @@ public:
 
   STDMETHOD(get_MD5)(BSTR* pVal);
   STDMETHOD(get_PostedLength)(ULONGLONG* pVal);
-  STDMETHOD(put_PostedLength)(ULONGLONG newVal);
   STDMETHOD(get_PostUrl)(BSTR* pVal);
   STDMETHOD(put_PostUrl)(BSTR newVal);
   STDMETHOD(get_EncodeType)(BSTR* pVal);
@@ -152,6 +151,7 @@ public:
   STDMETHOD(get_ErrorCode)(LONG* pVal);
   STDMETHOD(get_FileSize)(ULONGLONG* pVal);
   STDMETHOD(get_ErrorMsg)(BSTR* pVal);
+  STDMETHOD(PostFromPosition)(ULONGLONG position, BYTE* result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)
