@@ -196,3 +196,13 @@ STDMETHODIMP CPartition::GetClipboardFiles(IDispatch** result) {
   *result = p;
   return S_OK;
 }
+
+STDMETHODIMP CPartition::GetFileSize(BSTR file, ULONGLONG* result) {
+  // TODO: Add your implementation code here
+  *result = 0;
+  std::wstring filew(file, ::SysStringLen(file));
+  if (boost::filesystem::exists(filew)) {
+    *result = boost::filesystem::file_size(filew);
+  }
+  return S_OK;
+}

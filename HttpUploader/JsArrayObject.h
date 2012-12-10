@@ -124,8 +124,12 @@ private:
       result->vt = VT_NULL;
       return E_FAIL;
     }
-    result->ulVal = 0;
-    result->vt = VT_UINT;
+    if (0 == Size()) {
+      result->vt = VT_NULL;
+    } else {
+      result->ulVal = 0;
+      result->vt = VT_UINT;
+    }
     return S_OK;
   }
 
@@ -135,8 +139,8 @@ private:
       result->vt = VT_NULL;
       return E_FAIL;
     }
-    //上限索引为大小-1
-    if (Size() == 0) {
+    //上限索引为大小减1
+    if (0 == Size()) {
       result->vt = VT_NULL;
     } else {
       result->ulVal = Size()-1;

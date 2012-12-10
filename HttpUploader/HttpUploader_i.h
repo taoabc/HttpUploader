@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Wed Dec 05 21:46:22 2012
+/* at Mon Dec 10 22:44:35 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -566,6 +566,10 @@ EXTERN_C const IID IID_IPartition;
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetClipboardFiles( 
             /* [retval][out] */ IDispatch **result) = 0;
         
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetFileSize( 
+            /* [in] */ BSTR file,
+            /* [retval][out] */ ULONGLONG *result) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -647,6 +651,11 @@ EXTERN_C const IID IID_IPartition;
             IPartition * This,
             /* [retval][out] */ IDispatch **result);
         
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *GetFileSize )( 
+            IPartition * This,
+            /* [in] */ BSTR file,
+            /* [retval][out] */ ULONGLONG *result);
+        
         END_INTERFACE
     } IPartitionVtbl;
 
@@ -706,6 +715,9 @@ EXTERN_C const IID IID_IPartition;
 
 #define IPartition_GetClipboardFiles(This,result)	\
     ( (This)->lpVtbl -> GetClipboardFiles(This,result) ) 
+
+#define IPartition_GetFileSize(This,file,result)	\
+    ( (This)->lpVtbl -> GetFileSize(This,file,result) ) 
 
 #endif /* COBJMACROS */
 

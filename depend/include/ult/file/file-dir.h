@@ -10,6 +10,7 @@
 #include <windows.h>
 #include <shlobj.h>
 #include <shellapi.h>
+#include <vector>
 
 namespace ult {
 
@@ -45,7 +46,7 @@ inline void AddPathBackslash(std::wstring* dirpath) {
   if (dirpath->empty()) {
     return;
   }
-  if (dirpath->at(dirpath->length()-1) == L'\\') {
+  if (dirpath->at(dirpath->length()-1) != L'\\') {
     dirpath->push_back(L'\\');
   }
 }
@@ -65,35 +66,44 @@ inline void AppendPath(std::wstring* toappend,
     toappend->append(post);
 }
 
-inline ULONGLONG GetDriveFreeSpace(const std::wstring& drive) {
+inline ULONGLONG GetDiskFreeSpace(const std::wstring& directory) {
   ULARGE_INTEGER freespace;
-  ::GetDiskFreeSpaceEx(drive.c_str(), &freespace, NULL, NULL);
+  ::GetDiskFreeSpaceEx(directory.c_str(), &freespace, NULL, NULL);
   return freespace.QuadPart;
 }
 
-inline std::wstring GetMaxFreeSpaceDrive(ULONGLONG* freesize = NULL) {
+inline std::vector<std::wstring> GetDriveInType(UINT type = DRIVE_FIXED) {
   DWORD buf_len = ::GetLogicalDriveStrings(0, NULL);
   wchar_t* buf = new wchar_t [buf_len];
 
-  std::wstring drive;
-  ULONGLONG maxfree = 0;
-
+  std::vector<std::wstring> vec;
   if (0 != ::GetLogicalDriveStrings(buf_len, buf)) {
     wchar_t* drive_tmp = buf;
     DWORD i = 0;
     while (i <= buf_len) {
-      if (DRIVE_FIXED == ::GetDriveType(drive_tmp)) {
-        ULONGLONG t = GetDriveFreeSpace(drive_tmp);
-        if (t > maxfree) {
-          maxfree = t;
-          drive = drive_tmp;
-        }
+      if (type == ::GetDriveType(drive_tmp)) {
+        vec.push_back(drive_tmp);
       }
       i += static_cast<DWORD>(wcslen(drive_tmp)) + 1;
       drive_tmp = buf + i;
     }
   }
   delete[] buf;
+  return vec;
+}
+
+inline std::wstring GetMaxFreeSpaceDrive(ULONGLONG* freesize = NULL) {
+  std::vector<std::wstring> vec = GetDriveInType();
+  ULONGLONG maxfree = 0;
+  std::wstring drive;
+  for (std::vector<std::wstring>::const_iterator iter = vec.begin();
+      iter != vec.end(); ++iter) {
+    ULONGLONG t = GetDiskFreeSpace(*iter);
+    if (t > maxfree) {
+      maxfree = t;
+      drive = *iter;
+    }
+  }
   if (freesize != NULL) {
     *freesize = maxfree;
   }
@@ -112,6 +122,12 @@ inline std::wstring GetAppDataDirectory(void) {
   return buf;
 }
 
+inline std::wstring GetSystemDirectory(void) {
+  wchar_t buf[MAX_PATH];
+  ::SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, buf);
+  return buf;
+}
+
 inline bool IsPathFileExist(const std::wstring& pathfile) {
   if (-1 != _waccess(pathfile.c_str(), 0)) {
     return true;
@@ -120,7 +136,7 @@ inline bool IsPathFileExist(const std::wstring& pathfile) {
   }
 }
 
-inline std::wstring GetUpperPath(const std::wstring& path) {
+inline std::wstring GetUpperDirectory(const std::wstring& path) {
   std::wstring tmp(path);
   ult::RemovePathBackslash(&tmp);
   int pos = tmp.rfind(L'\\');
@@ -130,6 +146,17 @@ inline std::wstring GetUpperPath(const std::wstring& path) {
   return std::wstring(tmp.c_str(), pos+1);
 }
 
+inline std::wstring GetRootDirectory(const std::wstring& path) {
+  int pos = path.find(L'\\');
+  if (pos == 0) {
+    pos = path.find(L'\\', 2); 
+  }
+  if (pos != std::wstring::npos) {
+    return path.substr(0, pos+1);
+  }
+  return L"";
+}
+
 inline std::wstring GetSelfModulePath(void) {
   wchar_t buf[MAX_PATH];
   ::GetModuleFileName(NULL, buf, MAX_PATH);
@@ -137,13 +164,13 @@ inline std::wstring GetSelfModulePath(void) {
 }
 
 inline std::wstring GetSelfModuleDirectory(void) {
-  return GetUpperPath(ult::GetSelfModulePath());
+  return GetUpperDirectory(ult::GetSelfModulePath());
 }
 
 inline std::wstring GetNamedModuleDirectory(const std::wstring& module_name) {
   wchar_t buf[MAX_PATH];
   ::GetModuleFileName(GetModuleHandle(module_name.c_str()), buf, MAX_PATH);
-  return GetUpperPath(buf);
+  return GetUpperDirectory(buf);
 }
 
 inline bool MakeSureFolderExist(const std::wstring& folder_path) {

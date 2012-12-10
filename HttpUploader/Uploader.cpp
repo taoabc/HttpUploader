@@ -12,7 +12,9 @@
 
 CUploader::CUploader( void ) :
     posted_length_(0),
-    range_size_(131072) {
+    range_size_(131072),
+    file_size_limit_(2147483648),
+    file_size_(0) {
   msgwnd_.Create(HWND_MESSAGE);
   msgwnd_.SetWindowLongPtr(GWLP_USERDATA, (LONG_PTR)this);
 }
@@ -189,8 +191,13 @@ STDMETHODIMP CUploader::AddField(BSTR key, BSTR value, BYTE* result) {
 
 STDMETHODIMP CUploader::Post(BYTE* result) {
   // TODO: Add your implementation code here
-  if (local_file_.empty() || post_url_.empty()) {
-    *result = 0;
+  *result = 0;
+  if (local_file_.empty()) {
+    SetError(err::kLocalFileEmpty);
+  } else if(post_url_.empty()) {
+    SetError(err::kPostUrlEmpty);
+  } else if (file_size_ > file_size_limit_) {
+    SetError(err::kFileSizeExceed);
   } else {
     boost::thread t(std::bind(&CUploader::DoPost, this, 0));
     t.detach();
@@ -219,23 +226,30 @@ STDMETHODIMP CUploader::Stop(BYTE* result) {
 }
 
 void CUploader::CalcMd5( const std::wstring& file ) {
+  //文件大小为0，返回
+  if (0 == boost::filesystem::file_size(file)) {
+    SetError(err::kMd5FileSizeZero);
+    return;
+  }
   std::function<void(ULONGLONG, ULONGLONG)> OnWorking = [this](ULONGLONG completed, ULONGLONG total){
     //更改共享变量，上锁
     mutex_calcmd5_.lock();
     md5_percent_ = (USHORT)ult::UIntMultDiv(100, completed, total);
-    msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateMd5Working);
+    msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Working);
     mutex_calcmd5_.unlock();
   };
-  mutex_calcmd5_.lock();
   md5_percent_ = 0;
-  msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateMd5Working);
-  mutex_calcmd5_.unlock();
+  msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Working);
   //同步计算
   std::wstring md5 = ult::MD5File(file, OnWorking);
+  if (md5.empty()) {
+    SetError(err::kMd5FileOpenError);
+    return;
+  }
   //计算完成，更改共享变量
   mutex_calcmd5_.lock();
   md5_ = md5;
-  msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateMd5Complete);
+  msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Complete);
   mutex_calcmd5_.unlock();
 }
 
@@ -266,39 +280,43 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
   }
   ULONGLONG filesize = file_size_;
   boost::filesystem::path file(local_file_);
+  if (!boost::filesystem::exists(local_file_)) {
+    SetError(err::kLocalFileAbsent);
+    return;
+  }
   std::wstring name = file.filename().wstring();
   posted_length_ = start_pos;
   if (posted_length_ >= filesize) {
     error_msg_ = L"续传位置超过或等于文件大小";
-    msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
+    msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateError);
     return;
   }
   ULONGLONG sendsize = filesize - posted_length_;
   int ret = uploader.BeginPost(post_url_, name, sendsize);
   if (ret != ult::HttpStatus::kSuccess) {
     error_msg_ = L"连接服务器错误";
-    msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
+    SetError(err::kConnectError);
     return;
   }
-  msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateConnected);
+  msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateConnected);
   DWORD write, readed;
   stop_ = false;
   begin_post_time_ = ::GetTickCount();
   begin_post_cursor_ = posted_length_;
   msgwnd_.SetPostTimer();
-  msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateUploading);
+  msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploading);
   ULONGLONG new_pos;
-  DWORD buf_len = (DWORD)range_size_; // set buffer 128K
-  char* buffer = new char[buf_len];
+  DWORD buf_len = (DWORD)range_size_; // set buffer
   ult::File f;
   if (!f.Open(local_file_)) {
     error_msg_ = L"无法打开指定文件";
-    msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
+    SetError(err::kFileOpenError);
     return;
   }
   f.Seek(posted_length_, &new_pos);
   bool isok = true;
   LONG last_state = 0;
+  char* buffer = new char[buf_len];
   while (posted_length_ < filesize) {
     if (stop_) {
       isok = false;
@@ -311,6 +329,7 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
     if (readed != write) {
       isok = false;
       error_msg_ = L"读取文件错误";
+      error_code_ = err::kFileReadError;
       last_state = state::kStateError;
       break;
     }
@@ -318,6 +337,7 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
     if (FAILED(hr)) {
       isok = false;
       error_msg_ = L"POST过程中发生错误";
+      error_code_ = err::kSendDataError;
       last_state = state::kStateError;
       break;
     }
@@ -326,17 +346,17 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
   delete[] buffer;
   msgwnd_.KillPostTimer();
   if (!isok) {
-    msgwnd_.PostMessageW(UM_STATE_CHANGE, last_state);
+    msgwnd_.SendMessage(UM_STATE_CHANGE, last_state);
     return;
   }
   hr = uploader.EndPost();
   if (FAILED(hr)) {
     error_msg_ = L"结束传输过程中发生错误";
-    msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateError);
+    SetError(err::kSendDataError);
     return;
   }
-  msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateUploadComplete);
-  msgwnd_.PostMessage(UM_STATE_CHANGE, state::kStateLeisure);
+  msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploadComplete);
+  msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateLeisure);
 }
 
 void CUploader::OnPostTimer( void ) {
@@ -402,4 +422,9 @@ STDMETHODIMP CUploader::PostFromPosition(ULONGLONG position, BYTE* result) {
     *result = (BYTE)-1;
   }
   return S_OK;
+}
+
+void CUploader::SetError( LONG error_code ) {
+  error_code_ = error_code;
+  msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateError);
 }

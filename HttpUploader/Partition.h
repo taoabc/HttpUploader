@@ -79,6 +79,7 @@ public:
   STDMETHOD(ShowFolder)(BYTE* result);
   STDMETHOD(GetSelectedFiles)(IDispatch** result);
   STDMETHOD(GetClipboardFiles)(IDispatch** result);
+  STDMETHOD(GetFileSize)(BSTR file, ULONGLONG* result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Partition), CPartition)

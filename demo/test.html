@@ -25,28 +25,24 @@
           alert("show dialog failed");
         }
       }
-      function GetSelectedFiles() {
-        var list = Partition.GetSelectedFiles();
-        for (var i = list.lbound(1); i <= list.ubound(1); ++i) {
-          AppendOutput(list.getItem(i));
-        }
-      }
       function ShowFolder() {
         var ret = Partition.ShowFolder();
-        if (ret == null) {
-          alert("ret null");
-        }
         if (ret == false) {
           alert("ret false");
         }
-        if (ret == 0) {
-          alert("ret 0");
+      }
+      function GetSelectedFiles() {
+        var list = Partition.GetSelectedFiles();
+        for (var i = 0; i < list.Size(); ++i) {
+          var one_file = list.At(i);
+          AppendOutput("file " + one_file + " size " + Partition.GetFileSize(one_file))
         }
       }
       function GetClipboardFiles() {
         var list = Partition.GetClipboardFiles();
-        for (var i = list.lbound(1); i <= list.ubound(1); ++i) {
-          AppendOutput(list.getItem(i));
+        for (var i = 0; i < list.Size(); ++i) {
+          var one_file = list.At(i);
+          AppendOutput("file " + one_file + " size " + Partition.GetFileSize(one_file))
         }
       }
       function CalcMd5() {
@@ -56,9 +52,9 @@
           alert("请选择文件");
         } else {
           Uploader.Object = Test;
-          Uploader.OnStateChanged = JsOnStateChange
+          Uploader.OnStateChanged = JsOnStateChange;
           Uploader.LocalFile = list.getItem(0);
-          Uploader.CheckFile()
+          Uploader.CheckFile();
         }
       }
       function Post() {
@@ -97,6 +93,9 @@
       function JsOnStateChange(a, state) {
         AppendOutput("state change " + state);
         switch (state) {
+        case 4:
+          AppendOutput("msg code is: " + Uploader.Errorcode);
+          break;
         case 6:
           AppendOutput("md5 percent: " + Uploader.Md5Percent);
           break;
@@ -106,7 +105,6 @@
         }
       }
       function Test() {
-      
       }
     </script>
   </head>

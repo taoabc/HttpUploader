@@ -25,6 +25,9 @@ struct PostField {
   std::wstring value;
 };
 
+/*
+*/
+
 namespace state {
 enum {
   kStateLeisure        = 0,
@@ -35,6 +38,40 @@ enum {
   kStateConnected      = 5,
   kStateMd5Working     = 6,
   kStateMd5Complete    = 7,
+};
+}
+
+/*
+** "0": "连接服务器错误"
+** "1": "发送数据错误"
+** "2": "接收数据错误"
+** "3": "未设置本地文件"
+** "4": "本地文件不存在"
+** "5": "打开本地文件错误"
+** "6": "不能读取本地文件"
+** "7": "公司未授权"
+** "8": "未设置IP"
+** "9": "域名未授权"
+** "10": "文件大小超过限制"//默认为2G
+** //md5
+** "200": "无法打开文件"
+** "201": "文件大小为0"
+*/
+namespace err {
+enum {
+  kConnectError          = 0,
+  kSendDataError         = 1,
+  kRecvDateError         = 2,
+  kLocalFileEmpty        = 3,
+  kLocalFileAbsent       = 4,
+  kFileOpenError         = 5,
+  kFileReadError         = 6,
+  kCompanyUnauth         = 7,
+  kPostUrlEmpty          = 8,
+  kDomainUnauth          = 9,
+  kFileSizeExceed        = 10,
+  kMd5FileOpenError      = 200,
+  kMd5FileSizeZero       = 201,
 };
 }
 
@@ -80,6 +117,7 @@ private:
   //目前作为线程使用，注意同步
   void CalcMd5(const std::wstring& file);
   void DoPost(ULONGLONG start_pos);
+  void SetError(LONG error_code);
 
   //ie related
   CComQIPtr<IWebBrowser2> pwebbrowser_;
