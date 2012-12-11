@@ -19,7 +19,7 @@ WinhttpUploader::~WinhttpUploader(void) {
 void WinhttpUploader::InitBoundary(void) {
   //init boundary
   wboundary_ = L"----------";
-  wboundary_ += ult::GetRandomString(L"", 30);
+  wboundary_ += ult::GetRandomString(30);
   aboundary_ = ult::UnicodeToAnsi(wboundary_);
 }
 

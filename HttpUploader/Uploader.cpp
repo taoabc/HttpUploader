@@ -232,11 +232,8 @@ void CUploader::CalcMd5( const std::wstring& file ) {
     return;
   }
   std::function<void(ULONGLONG, ULONGLONG)> OnWorking = [this](ULONGLONG completed, ULONGLONG total){
-    //更改共享变量，上锁
-    mutex_calcmd5_.lock();
     md5_percent_ = (USHORT)ult::UIntMultDiv(100, completed, total);
     msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Working);
-    mutex_calcmd5_.unlock();
   };
   md5_percent_ = 0;
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Working);
@@ -385,7 +382,7 @@ void CUploader::OnPostTimer( void ) {
     param[2].vt = VT_UI8;
     param[3].ullVal = speed;
     param[3].vt = VT_UI8;
-    param[4].pdispVal = object_;
+    object_.CopyTo(&(param[4].pdispVal));
     param[4].vt = VT_DISPATCH;
     CComVariant result;
     ult::InvokeMethod(on_post_, param, 5, &result);

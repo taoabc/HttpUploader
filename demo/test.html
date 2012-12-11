@@ -19,7 +19,7 @@
       function InitPlugin() {
       }
       function ShowDialog() {
-        Partition.FileFilter = "pdf,exe,rar,zip"
+        Partition.FileFilter = "pdf,exe,rar,zip,7z,html,txt"
         Partition.AllowMultiSelect = 1
         if (!Partition.ShowDialog()) {
           alert("show dialog failed");
@@ -84,8 +84,8 @@
           Uploader.AddField("md5", "125125245");
           Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php"
           Uploader.LocalFile = list.getItem(0);
-          Uploader.PostFromPosition(1024);
-        }        
+          Uploader.PostFromPosition(2048);
+        }
       }
       function JsOnPost(obj, speed, posted, percent, time) {
         AppendOutput("speed " + speed + " posted " + posted + " percent " + percent + " time " + time);
