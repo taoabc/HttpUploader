@@ -80,6 +80,7 @@ public:
   STDMETHOD(GetSelectedFiles)(IDispatch** result);
   STDMETHOD(GetClipboardFiles)(IDispatch** result);
   STDMETHOD(GetFileSize)(BSTR file, ULONGLONG* result);
+  STDMETHOD(ClearSelectedFiles)(BYTE* result);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Partition), CPartition)

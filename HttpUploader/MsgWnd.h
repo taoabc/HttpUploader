@@ -11,6 +11,14 @@
 #include <string>
 
 #define UM_STATE_CHANGE                             WM_USER + 1
+#define UM_ON_POST                                  WM_USER + 2
+
+struct OnPostParam {
+  USHORT percent;
+  DWORD left_time;
+  ULONGLONG speed;
+  ULONGLONG posted;
+};
 
 class CUploader;
 
@@ -23,6 +31,7 @@ public:
 
   BEGIN_MSG_MAP(MsgWnd)
     MESSAGE_HANDLER(UM_STATE_CHANGE, OnStateChange)
+    MESSAGE_HANDLER(UM_ON_POST, OnPost)
     MESSAGE_HANDLER(WM_TIMER, OnTimer)
   END_MSG_MAP()
 
@@ -39,6 +48,7 @@ private:
   UINT_PTR GetUniqueId(void);
 
   LRESULT OnStateChange(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
+  LRESULT OnPost(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
   LRESULT OnTimer(UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled);
 
   UINT_PTR post_timer_;

@@ -7,7 +7,6 @@
     <script type="text/javascript">
       var Uploader = new ActiveXObject("IBMUploader.Uploader");
       var Partition = new ActiveXObject("IBMUploader.Partition");
-      var g_filename;
       function AppendOutput(txt) {
         var e = document.getElementById("output");
         e.value = e.value + "\n" + txt;
@@ -35,14 +34,17 @@
         var list = Partition.GetSelectedFiles();
         for (var i = 0; i < list.Size(); ++i) {
           var one_file = list.At(i);
-          AppendOutput("file " + one_file + " size " + Partition.GetFileSize(one_file))
+          AppendOutput("file " + one_file + " size " + Partition.GetFileSize(one_file));
         }
+      }
+      function ClearSelectedFiles() {
+        Partition.ClearSelectedFiles();
       }
       function GetClipboardFiles() {
         var list = Partition.GetClipboardFiles();
         for (var i = 0; i < list.Size(); ++i) {
           var one_file = list.At(i);
-          AppendOutput("file " + one_file + " size " + Partition.GetFileSize(one_file))
+          AppendOutput("file " + one_file + " size " + Partition.GetFileSize(one_file));
         }
       }
       function CalcMd5() {
@@ -67,9 +69,9 @@
           Uploader.OnStateChanged = JsOnStateChange;
           Uploader.OnPost = JsOnPost;
           Uploader.AddField("md5", "125125245");
-          Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php"
+          Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php";
           Uploader.LocalFile = list.getItem(0);
-          Uploader.Post()
+          Uploader.Post();
         }
       }
       function PostFromPosition() {
@@ -82,7 +84,7 @@
           Uploader.OnStateChanged = JsOnStateChange;
           Uploader.OnPost = JsOnPost;
           Uploader.AddField("md5", "125125245");
-          Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php"
+          Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php";
           Uploader.LocalFile = list.getItem(0);
           Uploader.PostFromPosition(2048);
         }
@@ -112,6 +114,7 @@
   <body onload="javascript:InitPlugin()">
     <button OnClick="javascript:ShowDialog()" style="top:0;">ShowDialog</button>
     <button OnClick="javascript:ShowFolder()">ShowFolder</button>
+    <button OnClick="javascript:ClearSelectedFiles()">ClearSelectedFiles</button>
     <button OnClick="javascript:GetSelectedFiles()">GetSelectedFiles</button>
     <button OnClick="javascript:GetClipboardFiles()">GetClipboardFiles</button>
     <button OnClick="javascript:CalcMd5()">CalcMd5</button>

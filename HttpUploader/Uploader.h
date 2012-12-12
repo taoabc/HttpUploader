@@ -111,6 +111,7 @@ public:
 
   void SetState(LONG state);
   void OnPostTimer(void);
+  void OnPostCallback(ULONGLONG speed, ULONGLONG posted, USHORT percent, DWORD left_time);
 
 private:
 

@@ -8,6 +8,7 @@
 #include "ult/file-io.h"
 #include <boost/filesystem.hpp>
 #include <ShlGuid.h>
+#include <cassert>
 // CUploader
 
 CUploader::CUploader( void ) :
@@ -268,6 +269,11 @@ void CUploader::SetState( LONG state ) {
   }
 }
 
+/*
+** 上传主函数
+** todo
+**   将其功能分开来写
+*/
 void CUploader::DoPost( ULONGLONG start_pos ) {
   HRESULT hr;
   WinhttpUploader uploader;
@@ -302,6 +308,13 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
   begin_post_cursor_ = posted_length_;
   msgwnd_.SetPostTimer();
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploading);
+  USHORT percent = (USHORT)ult::UIntMultDiv(100, posted_length_, filesize);
+  OnPostParam onpost_param;
+  onpost_param.left_time = 0;
+  onpost_param.percent = percent;
+  onpost_param.posted = posted_length_;
+  onpost_param.speed = 0;
+  msgwnd_.SendMessage(UM_ON_POST, (WPARAM)&onpost_param);
   ULONGLONG new_pos;
   DWORD buf_len = (DWORD)range_size_; // set buffer
   ult::File f;
@@ -352,6 +365,11 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
     SetError(err::kSendDataError);
     return;
   }
+  onpost_param.left_time = 0;
+  onpost_param.percent = 100;
+  onpost_param.posted = filesize;
+  onpost_param.speed = 0;
+  msgwnd_.SendMessage(UM_ON_POST, (WPARAM)&onpost_param);
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploadComplete);
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateLeisure);
 }
@@ -373,19 +391,7 @@ void CUploader::OnPostTimer( void ) {
   ULONGLONG avg_speed = (sended / used_time) * 1000;
   left_time = (DWORD)((file_size_ - new_posted) / avg_speed);
   if (on_post_ != NULL) {
-    VARIANT param[5];
-    param[0].ullVal = left_time;
-    param[0].vt = VT_UI4;
-    param[1].uiVal = percent;
-    param[1].vt = VT_UI2;
-    param[2].ullVal = new_posted;
-    param[2].vt = VT_UI8;
-    param[3].ullVal = speed;
-    param[3].vt = VT_UI8;
-    object_.CopyTo(&(param[4].pdispVal));
-    param[4].vt = VT_DISPATCH;
-    CComVariant result;
-    ult::InvokeMethod(on_post_, param, 5, &result);
+    OnPostCallback(speed, new_posted, percent, left_time);
   }
   oldtk = newtk;
   old_posted = new_posted;
@@ -424,4 +430,21 @@ STDMETHODIMP CUploader::PostFromPosition(ULONGLONG position, BYTE* result) {
 void CUploader::SetError( LONG error_code ) {
   error_code_ = error_code;
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateError);
+}
+
+void CUploader::OnPostCallback( ULONGLONG speed, ULONGLONG posted, USHORT percent, DWORD left_time ) {
+  assert(on_post_ != NULL);
+  VARIANT param[5];
+  param[0].ullVal = left_time;
+  param[0].vt = VT_UI4;
+  param[1].uiVal = percent;
+  param[1].vt = VT_UI2;
+  param[2].ullVal = posted;
+  param[2].vt = VT_UI8;
+  param[3].ullVal = speed;
+  param[3].vt = VT_UI8;
+  object_.CopyTo(&(param[4].pdispVal));
+  param[4].vt = VT_DISPATCH;
+  CComVariant result;
+  ult::InvokeMethod(on_post_, param, 5, &result);
 }

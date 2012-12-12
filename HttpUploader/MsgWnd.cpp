@@ -46,3 +46,10 @@ LRESULT MsgWnd::OnTimer( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled )
   }
   return 0;
 }
+
+LRESULT MsgWnd::OnPost( UINT msg, WPARAM wparam, LPARAM lparam, BOOL& handled ) {
+  CUploader* uploader = GetUploader();
+  OnPostParam* param = (OnPostParam*)wparam;
+  uploader->OnPostCallback(param->speed, param->posted, param->percent, param->left_time);
+  return 0;
+}

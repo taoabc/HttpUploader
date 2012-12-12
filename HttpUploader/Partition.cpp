@@ -206,3 +206,11 @@ STDMETHODIMP CPartition::GetFileSize(BSTR file, ULONGLONG* result) {
   }
   return S_OK;
 }
+
+
+STDMETHODIMP CPartition::ClearSelectedFiles(BYTE* result) {
+  // TODO: Add your implementation code here
+  selected_file_.clear();
+  *result = (BYTE)-1;
+  return S_OK;
+}

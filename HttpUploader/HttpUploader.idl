@@ -65,6 +65,7 @@ interface IPartition : IDispatch{
   [id(5)] HRESULT GetSelectedFiles([out,retval] IDispatch** result);
   [id(6)] HRESULT GetClipboardFiles([out,retval] IDispatch** result);
   [id(7)] HRESULT GetFileSize([in] BSTR file, [out,retval] ULONGLONG* result);
+  [id(8)] HRESULT ClearSelectedFiles([out,retval] BYTE* result);
 };
 [
 	uuid(F845713E-D341-4F05-969B-F472EBC22B27),

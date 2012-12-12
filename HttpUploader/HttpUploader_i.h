@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Tue Dec 11 12:15:01 2012
+/* at Wed Dec 12 10:11:58 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -570,6 +570,9 @@ EXTERN_C const IID IID_IPartition;
             /* [in] */ BSTR file,
             /* [retval][out] */ ULONGLONG *result) = 0;
         
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE ClearSelectedFiles( 
+            /* [retval][out] */ BYTE *result) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -656,6 +659,10 @@ EXTERN_C const IID IID_IPartition;
             /* [in] */ BSTR file,
             /* [retval][out] */ ULONGLONG *result);
         
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *ClearSelectedFiles )( 
+            IPartition * This,
+            /* [retval][out] */ BYTE *result);
+        
         END_INTERFACE
     } IPartitionVtbl;
 
@@ -718,6 +725,9 @@ EXTERN_C const IID IID_IPartition;
 
 #define IPartition_GetFileSize(This,file,result)	\
     ( (This)->lpVtbl -> GetFileSize(This,file,result) ) 
+
+#define IPartition_ClearSelectedFiles(This,result)	\
+    ( (This)->lpVtbl -> ClearSelectedFiles(This,result) ) 
 
 #endif /* COBJMACROS */
 
