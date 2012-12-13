@@ -34,7 +34,9 @@
         var list = Partition.GetSelectedFiles();
         for (var i = 0; i < list.Size(); ++i) {
           var one_file = list.At(i);
-          AppendOutput("file " + one_file + " size " + Partition.GetFileSize(one_file));
+          var file_size = Partition.GetFileSize(one_file);
+          alert(typeof(file_size));
+          AppendOutput("file " + one_file + " size " + parseInt(file_size));
         }
       }
       function ClearSelectedFiles() {
@@ -86,7 +88,7 @@
           Uploader.AddField("md5", "125125245");
           Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php";
           Uploader.LocalFile = list.getItem(0);
-          Uploader.PostFromPosition(2048);
+          Uploader.PostFromPosition(0);
         }
       }
       function JsOnPost(obj, speed, posted, percent, time) {
@@ -107,6 +109,8 @@
         }
       }
       function Test() {
+        Uploader.Test = 64424544654154516568464;
+        alert(Uploader.Test);
       }
     </script>
   </head>

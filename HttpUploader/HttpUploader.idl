@@ -47,6 +47,8 @@ interface IUploader : IDispatch{
   [propget, id(20)] HRESULT FileSize([out, retval] ULONGLONG* pVal);
   [propget, id(21)] HRESULT ErrorMsg([out, retval] BSTR* pVal);
   [id(22)] HRESULT PostFromPosition([in] ULONGLONG position, [out,retval] BYTE* result);
+  [propget, id(23)] HRESULT Test([out, retval] DOUBLE* pVal);
+  [propput, id(23)] HRESULT Test([in] DOUBLE newVal);
 };
 [
 	object,

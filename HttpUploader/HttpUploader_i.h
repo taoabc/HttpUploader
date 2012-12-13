@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Wed Dec 12 10:11:58 2012
+/* at Thu Dec 13 15:28:53 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -204,6 +204,12 @@ EXTERN_C const IID IID_IUploader;
             /* [in] */ ULONGLONG position,
             /* [retval][out] */ BYTE *result) = 0;
         
+        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_Test( 
+            /* [retval][out] */ DOUBLE *pVal) = 0;
+        
+        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_Test( 
+            /* [in] */ DOUBLE newVal) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -384,6 +390,14 @@ EXTERN_C const IID IID_IUploader;
             /* [in] */ ULONGLONG position,
             /* [retval][out] */ BYTE *result);
         
+        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Test )( 
+            IUploader * This,
+            /* [retval][out] */ DOUBLE *pVal);
+        
+        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Test )( 
+            IUploader * This,
+            /* [in] */ DOUBLE newVal);
+        
         END_INTERFACE
     } IUploaderVtbl;
 
@@ -515,6 +529,12 @@ EXTERN_C const IID IID_IUploader;
 
 #define IUploader_PostFromPosition(This,position,result)	\
     ( (This)->lpVtbl -> PostFromPosition(This,position,result) ) 
+
+#define IUploader_get_Test(This,pVal)	\
+    ( (This)->lpVtbl -> get_Test(This,pVal) ) 
+
+#define IUploader_put_Test(This,newVal)	\
+    ( (This)->lpVtbl -> put_Test(This,newVal) ) 
 
 #endif /* COBJMACROS */
 

@@ -448,3 +448,19 @@ void CUploader::OnPostCallback( ULONGLONG speed, ULONGLONG posted, USHORT percen
   CComVariant result;
   ult::InvokeMethod(on_post_, param, 5, &result);
 }
+
+
+STDMETHODIMP CUploader::get_Test(DOUBLE* pVal)
+{
+  // TODO: Add your implementation code here
+  *pVal = (DOUBLE)test_;
+  return S_OK;
+}
+
+
+STDMETHODIMP CUploader::put_Test(DOUBLE newVal)
+{
+  // TODO: Add your implementation code here
+  test_ = (ULONGLONG)newVal;
+  return S_OK;
+}

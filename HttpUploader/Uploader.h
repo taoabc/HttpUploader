@@ -154,6 +154,8 @@ private:
   boost::mutex mutex_calcmd5_;
   boost::mutex mutex_uploader_;
 
+  ULONGLONG test_;
+
 public:
 
   // IObjectWithSite
@@ -191,6 +193,8 @@ public:
   STDMETHOD(get_FileSize)(ULONGLONG* pVal);
   STDMETHOD(get_ErrorMsg)(BSTR* pVal);
   STDMETHOD(PostFromPosition)(ULONGLONG position, BYTE* result);
+  STDMETHOD(get_Test)(DOUBLE* pVal);
+  STDMETHOD(put_Test)(DOUBLE newVal);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)
