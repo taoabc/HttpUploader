@@ -19,6 +19,7 @@ using namespace ATL;
 #include "MsgWnd.h"
 
 #include <boost/thread.hpp>
+#include <vector>
 
 struct PostField {
   std::wstring key;
@@ -85,6 +86,7 @@ class ATL_NO_VTABLE CUploader :
 	public IObjectSafetyImpl<CUploader, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA> {
 public:
 	CUploader(void);
+  ~CUploader(void);
 
 DECLARE_REGISTRY_RESOURCEID(IDR_UPLOADER)
 
@@ -99,12 +101,9 @@ END_COM_MAP()
 
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-	HRESULT FinalConstruct() {
-		return S_OK;
-	}
+	HRESULT FinalConstruct(void);
 
-	void FinalRelease()	{
-	}
+	void FinalRelease(void);
 
 //给窗口回调的函数
 public:
@@ -142,6 +141,8 @@ private:
 
   DWORD begin_post_time_;
   ULONGLONG begin_post_cursor_;
+  DWORD http_status_;
+  std::wstring recv_string_;
 
   CComQIPtr<IDispatch> object_;
   CComQIPtr<IDispatch> on_post_;
@@ -154,7 +155,7 @@ private:
   boost::mutex mutex_calcmd5_;
   boost::mutex mutex_uploader_;
 
-  ULONGLONG test_;
+  std::vector<boost::thread> thread_vec_;
 
 public:
 
@@ -162,7 +163,7 @@ public:
   STDMETHOD(SetSite)(IUnknown* punksite);
 
   STDMETHOD(get_MD5)(BSTR* pVal);
-  STDMETHOD(get_PostedLength)(ULONGLONG* pVal);
+  STDMETHOD(get_PostedLength)(DOUBLE* pVal);
   STDMETHOD(get_PostUrl)(BSTR* pVal);
   STDMETHOD(put_PostUrl)(BSTR newVal);
   STDMETHOD(get_EncodeType)(BSTR* pVal);
@@ -173,10 +174,10 @@ public:
   STDMETHOD(put_OnStateChanged)(IDispatch* newVal);
   STDMETHOD(get_LocalFile)(BSTR* pVal);
   STDMETHOD(put_LocalFile)(BSTR newVal);
-  STDMETHOD(get_FileSizeLimit)(ULONGLONG* pVal);
-  STDMETHOD(put_FileSizeLimit)(ULONGLONG newVal);
-  STDMETHOD(get_RangeSize)(ULONGLONG* pVal);
-  STDMETHOD(put_RangeSize)(ULONGLONG newVal);
+  STDMETHOD(get_FileSizeLimit)(DOUBLE* pVal);
+  STDMETHOD(put_FileSizeLimit)(DOUBLE newVal);
+  STDMETHOD(get_RangeSize)(DOUBLE* pVal);
+  STDMETHOD(put_RangeSize)(DOUBLE newVal);
   STDMETHOD(get_CompanyLicensed)(BSTR* pVal);
   STDMETHOD(put_CompanyLicensed)(BSTR newVal);
   STDMETHOD(get_FileID)(ULONG* pVal);
@@ -190,11 +191,11 @@ public:
   STDMETHOD(put_Object)(IDispatch* newVal);
   STDMETHOD(get_Md5Percent)(USHORT* pVal);
   STDMETHOD(get_ErrorCode)(LONG* pVal);
-  STDMETHOD(get_FileSize)(ULONGLONG* pVal);
+  STDMETHOD(get_FileSize)(DOUBLE* pVal);
   STDMETHOD(get_ErrorMsg)(BSTR* pVal);
-  STDMETHOD(PostFromPosition)(ULONGLONG position, BYTE* result);
-  STDMETHOD(get_Test)(DOUBLE* pVal);
-  STDMETHOD(put_Test)(DOUBLE newVal);
+  STDMETHOD(PostFromPosition)(DOUBLE position, BYTE* result);
+  STDMETHOD(get_HttpStatus)(DOUBLE* pVal);
+  STDMETHOD(get_ReturnedString)(BSTR* pVal);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Uploader), CUploader)

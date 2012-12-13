@@ -118,5 +118,19 @@ HRESULT WinhttpUploader::PostFile(const void* data, DWORD len) {
 HRESULT WinhttpUploader::EndPost(void) {
   HRESULT hr = WriteData(postend_.c_str(), postend_.length());
   RETURN_IF_FAILED(hr);
-  return RecieveResponse();
+  string_rcv_.clear();
+  return RecieveResponse(&status_);
+}
+
+DWORD WinhttpUploader::GetStatus( void ) const {
+  return status_;
+}
+
+HRESULT WinhttpUploader::OnReadComplete( const void* info, DWORD length ) {
+  string_rcv_.append((const char*)info, length);
+  return S_OK;
+}
+
+std::string WinhttpUploader::GetRecvString( void ) const {
+  return string_rcv_;
 }

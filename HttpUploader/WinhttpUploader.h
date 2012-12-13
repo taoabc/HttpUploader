@@ -22,8 +22,12 @@ public:
       ULONGLONG sendsize, const std::wstring& field=L"file");
   HRESULT PostFile(const void* data, DWORD len);
   HRESULT EndPost(void);
+  DWORD GetStatus(void) const;
+  std::string GetRecvString(void) const;
 
 private:
+  
+  HRESULT OnReadComplete(const void* info, DWORD length);
 
   int InitRequest(const std::wstring& url);
   void InitBoundary(void);
@@ -35,6 +39,8 @@ private:
   std::wstring wboundary_;
   std::string sendfield_;
   std::string postend_;
+  DWORD status_;
+  std::string string_rcv_;
   
   static const std::string kLineEnd_;
   static const std::wstring kLineEndW_;

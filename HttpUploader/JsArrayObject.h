@@ -77,8 +77,8 @@ public:
       DISPPARAMS *pdisp_params, VARIANT *pvar_result, EXCEPINFO *pexcep_info, UINT *puarg_err) {
     switch (dispid_member) {
     case 1:
-      pvar_result->vt = VT_UINT;
-      pvar_result->intVal = Size();
+      pvar_result->vt = VT_R8;
+      pvar_result->dblVal = Size();
       break;
     case 2:
     case 5:
@@ -127,8 +127,8 @@ private:
     if (0 == Size()) {
       result->vt = VT_NULL;
     } else {
-      result->ulVal = 0;
-      result->vt = VT_UINT;
+      result->dblVal = 0;
+      result->vt = VT_R8;
     }
     return S_OK;
   }
@@ -143,8 +143,8 @@ private:
     if (0 == Size()) {
       result->vt = VT_NULL;
     } else {
-      result->ulVal = Size()-1;
-      result->vt = VT_UINT;
+      result->dblVal = Size()-1;
+      result->vt = VT_R8;
     }
     return S_OK;
   }

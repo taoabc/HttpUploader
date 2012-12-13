@@ -41,7 +41,7 @@ struct Md5String {
 };
 
 struct Md5File {
-  std::wstring operator()(const std::wstring& file_name, const std::function<void(ULONGLONG, ULONGLONG)> OnWorking) {
+  std::wstring operator()(const std::wstring& file_name, const std::function<void (ULONGLONG, ULONGLONG)> OnWorking) {
     ult::FileMap file_map;
     if (!file_map.Open(file_name)) {
       return L"";

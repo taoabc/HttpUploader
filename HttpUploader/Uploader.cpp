@@ -7,6 +7,7 @@
 #include "ult/number.h"
 #include "ult/file-io.h"
 #include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
 #include <ShlGuid.h>
 #include <cassert>
 // CUploader
@@ -16,8 +17,10 @@ CUploader::CUploader( void ) :
     range_size_(131072),
     file_size_limit_(2147483648),
     file_size_(0) {
-  msgwnd_.Create(HWND_MESSAGE);
-  msgwnd_.SetWindowLongPtr(GWLP_USERDATA, (LONG_PTR)this);
+}
+
+CUploader::~CUploader( void ) {
+  
 }
 
 STDMETHODIMP CUploader::SetSite( IUnknown* punksite ) {
@@ -45,9 +48,9 @@ STDMETHODIMP CUploader::get_MD5(BSTR* pVal) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::get_PostedLength(ULONGLONG* pVal) {
+STDMETHODIMP CUploader::get_PostedLength(DOUBLE* pVal) {
   // TODO: Add your implementation code here
-  *pVal = posted_length_;
+  *pVal = (DOUBLE)posted_length_;
   return S_OK;
 }
 
@@ -112,27 +115,27 @@ STDMETHODIMP CUploader::put_LocalFile(BSTR newVal) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::get_FileSizeLimit(ULONGLONG* pVal) {
+STDMETHODIMP CUploader::get_FileSizeLimit(DOUBLE* pVal) {
   // TODO: Add your implementation code here
-  *pVal = file_size_limit_;
+  *pVal = (DOUBLE)file_size_limit_;
   return S_OK;
 }
 
-STDMETHODIMP CUploader::put_FileSizeLimit(ULONGLONG newVal) {
+STDMETHODIMP CUploader::put_FileSizeLimit(DOUBLE newVal) {
   // TODO: Add your implementation code here
-  file_size_limit_ = newVal;
+  file_size_limit_ = (ULONGLONG)newVal;
   return S_OK;
 }
 
-STDMETHODIMP CUploader::get_RangeSize(ULONGLONG* pVal) {
+STDMETHODIMP CUploader::get_RangeSize(DOUBLE* pVal) {
   // TODO: Add your implementation code here
-  *pVal = range_size_;
+  *pVal = (DOUBLE)range_size_;
   return S_OK;
 }
 
-STDMETHODIMP CUploader::put_RangeSize(ULONGLONG newVal) {
+STDMETHODIMP CUploader::put_RangeSize(DOUBLE newVal) {
   // TODO: Add your implementation code here
-  range_size_ = newVal;
+  range_size_ = (ULONGLONG)newVal;
   return S_OK;
 }
 
@@ -213,7 +216,7 @@ STDMETHODIMP CUploader::CheckFile(BYTE* result) {
     *result = 0;
   } else {
     boost::thread t(std::bind(&CUploader::CalcMd5, this, local_file_));
-    t.detach();
+    thread_vec_.push_back(std::move(t));
     *result = (BYTE)-1;
   }
   return S_OK;
@@ -232,7 +235,8 @@ void CUploader::CalcMd5( const std::wstring& file ) {
     SetError(err::kMd5FileSizeZero);
     return;
   }
-  std::function<void(ULONGLONG, ULONGLONG)> OnWorking = [this](ULONGLONG completed, ULONGLONG total){
+  std::function<void (ULONGLONG, ULONGLONG)> OnWorking = [this](ULONGLONG completed, ULONGLONG total){
+    boost::this_thread::interruption_point();
     md5_percent_ = (USHORT)ult::UIntMultDiv(100, completed, total);
     msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Working);
   };
@@ -240,6 +244,7 @@ void CUploader::CalcMd5( const std::wstring& file ) {
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Working);
   //同步计算
   std::wstring md5 = ult::MD5File(file, OnWorking);
+  boost::this_thread::interruption_point();
   if (md5.empty()) {
     SetError(err::kMd5FileOpenError);
     return;
@@ -247,6 +252,7 @@ void CUploader::CalcMd5( const std::wstring& file ) {
   //计算完成，更改共享变量
   mutex_calcmd5_.lock();
   md5_ = md5;
+  boost::this_thread::interruption_point();
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Complete);
   mutex_calcmd5_.unlock();
 }
@@ -360,11 +366,13 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
     return;
   }
   hr = uploader.EndPost();
+  http_status_ = uploader.GetStatus();
   if (FAILED(hr)) {
     error_msg_ = L"结束传输过程中发生错误";
     SetError(err::kSendDataError);
     return;
   }
+  recv_string_ = ult::Utf8ToUnicode(uploader.GetRecvString());
   onpost_param.left_time = 0;
   onpost_param.percent = 100;
   onpost_param.posted = filesize;
@@ -403,9 +411,9 @@ STDMETHODIMP CUploader::get_ErrorCode(LONG* pVal) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::get_FileSize(ULONGLONG* pVal) {
+STDMETHODIMP CUploader::get_FileSize(DOUBLE* pVal) {
   // TODO: Add your implementation code here
-  *pVal = file_size_;
+  *pVal = (DOUBLE)file_size_;
   return S_OK;
 }
 
@@ -415,12 +423,12 @@ STDMETHODIMP CUploader::get_ErrorMsg(BSTR* pVal) {
   return S_OK;
 }
 
-STDMETHODIMP CUploader::PostFromPosition(ULONGLONG position, BYTE* result) {
+STDMETHODIMP CUploader::PostFromPosition(DOUBLE position, BYTE* result) {
   // TODO: Add your implementation code here
   if (local_file_.empty() || post_url_.empty()) {
     *result = 0;
   } else {
-    boost::thread t(std::bind(&CUploader::DoPost, this, position));
+    boost::thread t(std::bind(&CUploader::DoPost, this, (ULONGLONG)position));
     t.detach();
     *result = (BYTE)-1;
   }
@@ -439,28 +447,42 @@ void CUploader::OnPostCallback( ULONGLONG speed, ULONGLONG posted, USHORT percen
   param[0].vt = VT_UI4;
   param[1].uiVal = percent;
   param[1].vt = VT_UI2;
-  param[2].ullVal = posted;
-  param[2].vt = VT_UI8;
-  param[3].ullVal = speed;
-  param[3].vt = VT_UI8;
+  param[2].dblVal = (DOUBLE)posted;
+  param[2].vt = VT_R8;
+  param[3].dblVal = (DOUBLE)speed;
+  param[3].vt = VT_R8;
   object_.CopyTo(&(param[4].pdispVal));
   param[4].vt = VT_DISPATCH;
   CComVariant result;
   ult::InvokeMethod(on_post_, param, 5, &result);
 }
 
-
-STDMETHODIMP CUploader::get_Test(DOUBLE* pVal)
-{
+STDMETHODIMP CUploader::get_HttpStatus(DOUBLE* pVal) {
   // TODO: Add your implementation code here
-  *pVal = (DOUBLE)test_;
+  *pVal = http_status_;
   return S_OK;
 }
 
-
-STDMETHODIMP CUploader::put_Test(DOUBLE newVal)
-{
+STDMETHODIMP CUploader::get_ReturnedString(BSTR* pVal) {
   // TODO: Add your implementation code here
-  test_ = (ULONGLONG)newVal;
+  *pVal = ::SysAllocStringLen(recv_string_.c_str(), recv_string_.length());
+  return S_OK;
+}
+
+void CUploader::FinalRelease( void ) {
+  for (auto iter = thread_vec_.begin(); iter != thread_vec_.end(); ++iter) {
+    iter->interrupt();
+    iter->join();
+  }
+  object_.Release();
+  on_post_.Release();
+  on_state_changed_.Release();
+  msgwnd_.KillPostTimer();
+  msgwnd_.DestroyWindow();
+}
+
+HRESULT CUploader::FinalConstruct( void ) {
+  msgwnd_.Create(HWND_MESSAGE);
+  msgwnd_.SetWindowLongPtr(GWLP_USERDATA, (LONG_PTR)this);
   return S_OK;
 }

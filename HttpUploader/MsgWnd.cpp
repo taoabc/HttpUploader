@@ -8,7 +8,6 @@ MsgWnd::MsgWnd(void) {
 }
 
 MsgWnd::~MsgWnd(void) {
-  DestroyWindow();
 }
 
 CUploader* MsgWnd::GetUploader(void) {

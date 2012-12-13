@@ -57,7 +57,7 @@ public:
   ** some information must be setted
   ** cause this function will call virtual function which
   ** implement by derived class */
-  HRESULT RecieveResponse(void) {
+  HRESULT RecieveResponse(DWORD* pstatus) {
     HRESULT hr;
     if (FALSE == ::WinHttpReceiveResponse(handle_, NULL)) {
       return HRESULT_FROM_WIN32(::GetLastError());
@@ -68,6 +68,7 @@ public:
         WINHTTP_HEADER_NAME_BY_INDEX, &status, &len, WINHTTP_NO_HEADER_INDEX)) {
       return HRESULT_FROM_WIN32(::GetLastError());
     }
+    *pstatus = status;
     if (status != HTTP_STATUS_OK) {
       return E_FAIL;
     }

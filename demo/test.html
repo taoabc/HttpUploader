@@ -19,7 +19,7 @@
       }
       function ShowDialog() {
         Partition.FileFilter = "pdf,exe,rar,zip,7z,html,txt"
-        Partition.AllowMultiSelect = 1
+        Partition.AllowMultiSelect = 1;
         if (!Partition.ShowDialog()) {
           alert("show dialog failed");
         }
@@ -35,8 +35,7 @@
         for (var i = 0; i < list.Size(); ++i) {
           var one_file = list.At(i);
           var file_size = Partition.GetFileSize(one_file);
-          alert(typeof(file_size));
-          AppendOutput("file " + one_file + " size " + parseInt(file_size));
+          AppendOutput("file " + one_file + " size " + file_size);
         }
       }
       function ClearSelectedFiles() {
@@ -51,20 +50,20 @@
       }
       function CalcMd5() {
         var list = Partition.GetSelectedFiles();
-        var ubound = list.ubound(1);
-        if (ubound == null) {
+        var size = list.Size;
+        if (size <= 0) {
           alert("请选择文件");
         } else {
           Uploader.Object = Test;
           Uploader.OnStateChanged = JsOnStateChange;
-          Uploader.LocalFile = list.getItem(0);
+          Uploader.LocalFile = list.At(0);
           Uploader.CheckFile();
         }
       }
       function Post() {
         var list = Partition.GetSelectedFiles();
-        var ubound = list.ubound(1);
-        if (ubound == null) {
+        var size = list.Size();
+        if (size == 0) {
           alert("请选择文件");
         } else {
           Uploader.Object = Test;
@@ -72,14 +71,14 @@
           Uploader.OnPost = JsOnPost;
           Uploader.AddField("md5", "125125245");
           Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php";
-          Uploader.LocalFile = list.getItem(0);
+          Uploader.LocalFile = list.At(0);
           Uploader.Post();
         }
       }
       function PostFromPosition() {
         var list = Partition.GetSelectedFiles();
-        var ubound = list.ubound(1);
-        if (ubound == null) {
+        var size = list.Size();
+        if (size <= 0) {
           alert("请选择文件");
         } else {
           Uploader.Object = Test;
@@ -87,8 +86,8 @@
           Uploader.OnPost = JsOnPost;
           Uploader.AddField("md5", "125125245");
           Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php";
-          Uploader.LocalFile = list.getItem(0);
-          Uploader.PostFromPosition(0);
+          Uploader.LocalFile = list.At(0);
+          Uploader.PostFromPosition(4096);
         }
       }
       function JsOnPost(obj, speed, posted, percent, time) {
@@ -97,6 +96,10 @@
       function JsOnStateChange(a, state) {
         AppendOutput("state change " + state);
         switch (state) {
+        case 3:
+          AppendOutput("http status: " + Uploader.HttpStatus);
+          AppendOutput("http return: " + Uploader.ReturnedString);
+          break;
         case 4:
           AppendOutput("msg code is: " + Uploader.Errorcode);
           break;
@@ -109,8 +112,6 @@
         }
       }
       function Test() {
-        Uploader.Test = 64424544654154516568464;
-        alert(Uploader.Test);
       }
     </script>
   </head>
