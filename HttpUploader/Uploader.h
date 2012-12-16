@@ -79,11 +79,11 @@ enum {
 // CUploader
 
 class ATL_NO_VTABLE CUploader :
-	public CComObjectRootEx<CComSingleThreadModel>,
-	public CComCoClass<CUploader, &CLSID_Uploader>,
-	public IObjectWithSiteImpl<CUploader>,
-	public IDispatchImpl<IUploader, &IID_IUploader, &LIBID_HttpUploaderLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
-	public IObjectSafetyImpl<CUploader, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA> {
+    public CComObjectRootEx<CComSingleThreadModel>,
+	  public CComCoClass<CUploader, &CLSID_Uploader>,
+	  public IObjectWithSiteImpl<CUploader>,
+	  public IDispatchImpl<IUploader, &IID_IUploader, &LIBID_HttpUploaderLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
+	  public IObjectSafetyImpl<CUploader, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA> {
 public:
 	CUploader(void);
   ~CUploader(void);
@@ -115,14 +115,9 @@ public:
 private:
 
   //目前作为线程使用，注意同步
-  void CalcMd5(const std::wstring& file);
+  void CalcMd5Thread(const std::wstring& file);
   void DoPost(ULONGLONG start_pos);
   void SetError(LONG error_code);
-
-  //ie related
-  CComQIPtr<IWebBrowser2> pwebbrowser_;
-  CComQIPtr<IHTMLDocument2> phtmldoc_;
-  HWND hwnd_browser_;
 
   //property
   std::wstring md5_;

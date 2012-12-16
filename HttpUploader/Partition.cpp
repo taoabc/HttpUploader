@@ -19,17 +19,14 @@ CPartition::CPartition( void ) :
 STDMETHODIMP CPartition::SetSite( IUnknown* punksite ) {
   if (punksite != NULL) {
     CComQIPtr<IServiceProvider> sp = punksite;
-    HRESULT hr = sp->QueryService(IID_IWebBrowserApp,
-      IID_IWebBrowser2, (void**)&pwebbrowser_);
-    hr = pwebbrowser_->get_Document((IDispatch**)&phtmldoc_);
+    /*HRESULT hr = sp->QueryService(IID_IWebBrowserApp,
+    IID_IWebBrowser2, (void**)&pwebbrowser_);*/
     CComQIPtr<IOleWindow> pwindow;
     sp->QueryService(SID_SShellBrowser, IID_IOleWindow,
       (void**)&pwindow);
     pwindow->GetWindow(&hwnd_browser_);
   } else {
     //release pointer
-    pwebbrowser_.Release();
-    phtmldoc_.Release();
   }
   return IObjectWithSiteImpl<CPartition>::SetSite(punksite);
 }
@@ -197,20 +194,27 @@ STDMETHODIMP CPartition::GetClipboardFiles(IDispatch** result) {
   return S_OK;
 }
 
-STDMETHODIMP CPartition::GetFileSize(BSTR file, ULONGLONG* result) {
+STDMETHODIMP CPartition::GetFileSize(BSTR file, DOUBLE* result) {
   // TODO: Add your implementation code here
   *result = 0;
   std::wstring filew(file, ::SysStringLen(file));
   if (boost::filesystem::exists(filew)) {
-    *result = boost::filesystem::file_size(filew);
+    *result = (DOUBLE)boost::filesystem::file_size(filew);
   }
   return S_OK;
 }
-
 
 STDMETHODIMP CPartition::ClearSelectedFiles(BYTE* result) {
   // TODO: Add your implementation code here
   selected_file_.clear();
   *result = (BYTE)-1;
   return S_OK;
+}
+
+HRESULT CPartition::FinalConstruct(void) {
+  return S_OK;
+}
+
+void CPartition::FinalRelease( void ) {
+
 }

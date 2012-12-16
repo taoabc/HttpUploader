@@ -38,16 +38,11 @@ BEGIN_COM_MAP(CPartition)
   COM_INTERFACE_ENTRY(IObjectSafety)
 END_COM_MAP()
 
-
-
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-	HRESULT FinalConstruct() {
-		return S_OK;
-	}
+	HRESULT FinalConstruct(void);
 
-	void FinalRelease()	{
-	}
+	void FinalRelease(void);
 
 private:
 
@@ -62,8 +57,6 @@ private:
   std::wstring NormalFileFilter(const std::wstring& filter);
 
   //ie related
-  CComQIPtr<IWebBrowser2> pwebbrowser_;
-  CComQIPtr<IHTMLDocument2> phtmldoc_;
   HWND hwnd_browser_;
 
   std::vector<std::wstring> selected_file_;
@@ -79,7 +72,7 @@ public:
   STDMETHOD(ShowFolder)(BYTE* result);
   STDMETHOD(GetSelectedFiles)(IDispatch** result);
   STDMETHOD(GetClipboardFiles)(IDispatch** result);
-  STDMETHOD(GetFileSize)(BSTR file, ULONGLONG* result);
+  STDMETHOD(GetFileSize)(BSTR file, DOUBLE* result);
   STDMETHOD(ClearSelectedFiles)(BYTE* result);
 };
 

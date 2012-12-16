@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Thu Dec 13 22:06:28 2012
+/* at Sun Dec 16 17:32:57 2012
  */
 /* Compiler settings for HttpUploader.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -588,7 +588,7 @@ EXTERN_C const IID IID_IPartition;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetFileSize( 
             /* [in] */ BSTR file,
-            /* [retval][out] */ ULONGLONG *result) = 0;
+            /* [retval][out] */ DOUBLE *result) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE ClearSelectedFiles( 
             /* [retval][out] */ BYTE *result) = 0;
@@ -677,7 +677,7 @@ EXTERN_C const IID IID_IPartition;
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *GetFileSize )( 
             IPartition * This,
             /* [in] */ BSTR file,
-            /* [retval][out] */ ULONGLONG *result);
+            /* [retval][out] */ DOUBLE *result);
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *ClearSelectedFiles )( 
             IPartition * This,

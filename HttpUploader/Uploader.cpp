@@ -20,23 +20,13 @@ CUploader::CUploader( void ) :
 }
 
 CUploader::~CUploader( void ) {
-  
+
 }
 
 STDMETHODIMP CUploader::SetSite( IUnknown* punksite ) {
   if (punksite != NULL) {
-    CComQIPtr<IServiceProvider> sp = punksite;
-    HRESULT hr = sp->QueryService(IID_IWebBrowserApp,
-      IID_IWebBrowser2, (void**)&pwebbrowser_);
-    hr = pwebbrowser_->get_Document((IDispatch**)&phtmldoc_);
-    CComQIPtr<IOleWindow> pwindow;
-    sp->QueryService(SID_SShellBrowser, IID_IOleWindow,
-      (void**)&pwindow);
-    pwindow->GetWindow(&hwnd_browser_);
   } else {
     //release pointer
-    pwebbrowser_.Release();
-    phtmldoc_.Release();
   }
   return IObjectWithSiteImpl<CUploader>::SetSite(punksite);
 }
@@ -165,7 +155,7 @@ STDMETHODIMP CUploader::put_FileID(ULONG newVal) {
 
 STDMETHODIMP CUploader::get_Object(IDispatch** pVal) {
   // TODO: Add your implementation code here
-  object_.CopyTo(pVal);
+  *pVal = object_;
   return S_OK;
 }
 
@@ -204,7 +194,7 @@ STDMETHODIMP CUploader::Post(BYTE* result) {
     SetError(err::kFileSizeExceed);
   } else {
     boost::thread t(std::bind(&CUploader::DoPost, this, 0));
-    t.detach();
+    thread_vec_.push_back(std::move(t));
     *result = (BYTE)-1;
   }
   return S_OK;
@@ -215,7 +205,7 @@ STDMETHODIMP CUploader::CheckFile(BYTE* result) {
   if (local_file_.empty()) {
     *result = 0;
   } else {
-    boost::thread t(std::bind(&CUploader::CalcMd5, this, local_file_));
+    boost::thread t(std::bind(&CUploader::CalcMd5Thread, this, local_file_));
     thread_vec_.push_back(std::move(t));
     *result = (BYTE)-1;
   }
@@ -229,7 +219,7 @@ STDMETHODIMP CUploader::Stop(BYTE* result) {
   return S_OK;
 }
 
-void CUploader::CalcMd5( const std::wstring& file ) {
+void CUploader::CalcMd5Thread( const std::wstring& file ) {
   //文件大小为0，返回
   if (0 == boost::filesystem::file_size(file)) {
     SetError(err::kMd5FileSizeZero);
@@ -244,7 +234,6 @@ void CUploader::CalcMd5( const std::wstring& file ) {
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Working);
   //同步计算
   std::wstring md5 = ult::MD5File(file, OnWorking);
-  boost::this_thread::interruption_point();
   if (md5.empty()) {
     SetError(err::kMd5FileOpenError);
     return;
@@ -252,7 +241,6 @@ void CUploader::CalcMd5( const std::wstring& file ) {
   //计算完成，更改共享变量
   mutex_calcmd5_.lock();
   md5_ = md5;
-  boost::this_thread::interruption_point();
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateMd5Complete);
   mutex_calcmd5_.unlock();
 }
@@ -334,6 +322,7 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
   LONG last_state = 0;
   char* buffer = new char[buf_len];
   while (posted_length_ < filesize) {
+    boost::this_thread::interruption_point();
     if (stop_) {
       isok = false;
       error_msg_ = L"上传被手动停止";
@@ -451,7 +440,7 @@ void CUploader::OnPostCallback( ULONGLONG speed, ULONGLONG posted, USHORT percen
   param[2].vt = VT_R8;
   param[3].dblVal = (DOUBLE)speed;
   param[3].vt = VT_R8;
-  object_.CopyTo(&(param[4].pdispVal));
+  param[4].pdispVal = object_;
   param[4].vt = VT_DISPATCH;
   CComVariant result;
   ult::InvokeMethod(on_post_, param, 5, &result);
@@ -470,14 +459,14 @@ STDMETHODIMP CUploader::get_ReturnedString(BSTR* pVal) {
 }
 
 void CUploader::FinalRelease( void ) {
+  msgwnd_.KillPostTimer();
   for (auto iter = thread_vec_.begin(); iter != thread_vec_.end(); ++iter) {
     iter->interrupt();
-    iter->join();
+    iter->timed_join(boost::posix_time::milliseconds(1000));
   }
-  object_.Release();
+  thread_vec_.clear();
   on_post_.Release();
   on_state_changed_.Release();
-  msgwnd_.KillPostTimer();
   msgwnd_.DestroyWindow();
 }
 
