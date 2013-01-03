@@ -21,11 +21,6 @@ using namespace ATL;
 #include <boost/thread.hpp>
 #include <vector>
 
-struct PostField {
-  std::wstring key;
-  std::wstring value;
-};
-
 /*
 */
 
@@ -116,9 +111,10 @@ private:
 
   //目前作为线程使用，注意同步
   void CalcMd5Thread(const std::wstring& file);
-  void DoPost(ULONGLONG start_pos);
+  void PostThread(ULONGLONG start_pos);
   void SetError(LONG error_code);
-
+  bool StartPosValid(ULONGLONG pos);
+  void SendOnPostMsg(ULONGLONG speed, ULONGLONG posted, DWORD left_time);
   //property
   std::wstring md5_;
   std::wstring post_url_;

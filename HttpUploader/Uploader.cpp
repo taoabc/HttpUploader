@@ -6,6 +6,7 @@
 #include "ult/md5.h"
 #include "ult/number.h"
 #include "ult/file-io.h"
+#include "ult/simple-buffer.h"
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <ShlGuid.h>
@@ -193,7 +194,7 @@ STDMETHODIMP CUploader::Post(BYTE* result) {
   } else if (file_size_ > file_size_limit_) {
     SetError(err::kFileSizeExceed);
   } else {
-    boost::thread t(std::bind(&CUploader::DoPost, this, 0));
+    boost::thread t(std::bind(&CUploader::PostThread, this, 0));
     thread_vec_.push_back(std::move(t));
     *result = (BYTE)-1;
   }
@@ -210,6 +211,19 @@ STDMETHODIMP CUploader::CheckFile(BYTE* result) {
     *result = (BYTE)-1;
   }
   return S_OK;
+}
+
+bool CUploader::StartPosValid( ULONGLONG pos ) {
+  ULONGLONG filesize = file_size_;
+  if (!boost::filesystem::exists(local_file_)) {
+    SetError(err::kLocalFileAbsent);
+    return false;
+  }
+  if (pos >= filesize) {
+    SetError(err::kFileReadError);
+    return false;
+  }
+  return true;
 }
 
 STDMETHODIMP CUploader::Stop(BYTE* result) {
@@ -268,29 +282,20 @@ void CUploader::SetState( LONG state ) {
 ** todo
 **   将其功能分开来写
 */
-void CUploader::DoPost( ULONGLONG start_pos ) {
+void CUploader::PostThread( ULONGLONG start_pos ) {
+  if (!StartPosValid(start_pos)) {
+    return;
+  }
   HRESULT hr;
   WinhttpUploader uploader;
-  BOOST_FOREACH(PostField field, post_fields_) {
-    std::string uvalue = ult::UnicodeToUtf8(field.value);
-    uploader.AddField(field.key, uvalue.c_str(), uvalue.length());
-  }
-  ULONGLONG filesize = file_size_;
-  boost::filesystem::path file(local_file_);
-  if (!boost::filesystem::exists(local_file_)) {
-    SetError(err::kLocalFileAbsent);
-    return;
-  }
-  std::wstring name = file.filename().wstring();
+  /*BOOST_FOREACH(PostField field, post_fields_) {
+  std::string uvalue = ult::UnicodeToUtf8(field.value);
+  uploader.AddField(field.key, uvalue.c_str(), uvalue.length());
+  }*/
+
   posted_length_ = start_pos;
-  if (posted_length_ >= filesize) {
-    error_msg_ = L"续传位置超过或等于文件大小";
-    msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateError);
-    return;
-  }
-  ULONGLONG sendsize = filesize - posted_length_;
-  int ret = uploader.BeginPost(post_url_, name, sendsize);
-  if (ret != ult::HttpStatus::kSuccess) {
+  hr = uploader.PreparePost(post_url_, local_file_, post_fields_);
+  if (FAILED(hr)) {
     error_msg_ = L"连接服务器错误";
     SetError(err::kConnectError);
     return;
@@ -302,13 +307,7 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
   begin_post_cursor_ = posted_length_;
   msgwnd_.SetPostTimer();
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploading);
-  USHORT percent = (USHORT)ult::UIntMultDiv(100, posted_length_, filesize);
-  OnPostParam onpost_param;
-  onpost_param.left_time = 0;
-  onpost_param.percent = percent;
-  onpost_param.posted = posted_length_;
-  onpost_param.speed = 0;
-  msgwnd_.SendMessage(UM_ON_POST, (WPARAM)&onpost_param);
+  SendOnPostMsg(0, posted_length_, 0);
   ULONGLONG new_pos;
   DWORD buf_len = (DWORD)range_size_; // set buffer
   ult::File f;
@@ -320,8 +319,9 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
   f.Seek(posted_length_, &new_pos);
   bool isok = true;
   LONG last_state = 0;
-  char* buffer = new char[buf_len];
-  while (posted_length_ < filesize) {
+  ult::SimpleBuffer buffer(buf_len);
+  //循环读取文件
+  while (posted_length_ < file_size_) {
     boost::this_thread::interruption_point();
     if (stop_) {
       isok = false;
@@ -329,8 +329,8 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
       last_state = state::kStateStop;
       break;
     }
-    write = (DWORD)min(filesize-posted_length_, buf_len);
-    f.Read(buffer, write, &readed);
+    write = (DWORD)min(file_size_-posted_length_, buf_len);
+    f.Read(buffer.Data(), write, &readed);
     if (readed != write) {
       isok = false;
       error_msg_ = L"读取文件错误";
@@ -338,7 +338,7 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
       last_state = state::kStateError;
       break;
     }
-    hr = uploader.WriteData(buffer, readed);
+    hr = uploader.PostFile(buffer.Data(), readed, posted_length_);
     if (FAILED(hr)) {
       isok = false;
       error_msg_ = L"POST过程中发生错误";
@@ -348,25 +348,13 @@ void CUploader::DoPost( ULONGLONG start_pos ) {
     }
     posted_length_ += write;
   }
-  delete[] buffer;
   msgwnd_.KillPostTimer();
   if (!isok) {
     msgwnd_.SendMessage(UM_STATE_CHANGE, last_state);
     return;
   }
-  hr = uploader.EndPost();
-  http_status_ = uploader.GetStatus();
-  if (FAILED(hr)) {
-    error_msg_ = L"结束传输过程中发生错误";
-    SetError(err::kSendDataError);
-    return;
-  }
   recv_string_ = ult::Utf8ToUnicode(uploader.GetRecvString());
-  onpost_param.left_time = 0;
-  onpost_param.percent = 100;
-  onpost_param.posted = filesize;
-  onpost_param.speed = 0;
-  msgwnd_.SendMessage(UM_ON_POST, (WPARAM)&onpost_param);
+  SendOnPostMsg(0, file_size_, 0);
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploadComplete);
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateLeisure);
 }
@@ -417,7 +405,7 @@ STDMETHODIMP CUploader::PostFromPosition(DOUBLE position, BYTE* result) {
   if (local_file_.empty() || post_url_.empty()) {
     *result = 0;
   } else {
-    boost::thread t(std::bind(&CUploader::DoPost, this, (ULONGLONG)position));
+    boost::thread t(std::bind(&CUploader::PostThread, this, (ULONGLONG)position));
     t.detach();
     *result = (BYTE)-1;
   }
@@ -474,4 +462,13 @@ HRESULT CUploader::FinalConstruct( void ) {
   msgwnd_.Create(HWND_MESSAGE);
   msgwnd_.SetWindowLongPtr(GWLP_USERDATA, (LONG_PTR)this);
   return S_OK;
+}
+
+void CUploader::SendOnPostMsg( ULONGLONG speed, ULONGLONG posted, DWORD left_time ) {
+  OnPostParam onpost_param;
+  onpost_param.left_time = left_time;
+  onpost_param.percent = (USHORT)ult::UIntMultDiv(100, posted, file_size_);
+  onpost_param.posted = posted;
+  onpost_param.speed = speed;
+  msgwnd_.SendMessage(UM_ON_POST, (WPARAM)&onpost_param);
 }

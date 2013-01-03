@@ -2,10 +2,16 @@
 
 #include "ult/net/winhttp-downloader-status.h"
 #include "ult/sync-winhttp-request.h"
+#include <vector>
 
 #ifndef RETURN_IF_FAILED
 #define RETURN_IF_FAILED(x) { HRESULT __result_ = (x); if (FAILED(__result_)) return __result_; }
 #endif
+
+struct PostField {
+  std::wstring key;
+  std::wstring value;
+};
 
 class WinhttpUploader :
     public ult::SyncWinHttpRequest {
@@ -17,19 +23,18 @@ public:
 
   void Reset(void);
 
-  void AddField(const std::wstring& field, const char* data, DWORD len);
-  int BeginPost(const std::wstring& url, const std::wstring& filename,
-      ULONGLONG sendsize, const std::wstring& field=L"file");
-  HRESULT PostFile(const void* data, DWORD len);
-  HRESULT EndPost(void);
+  int InitRequest(const std::wstring& url);
+  std::string AddTempFiled(const std::wstring& field, const char* data, DWORD len);
+  void ClearField(void);
+  HRESULT PreparePost(const std::wstring& url, const std::wstring& filename, const std::vector<PostField>& post_fields);
+  HRESULT PostFile(const void* data, DWORD len, ULONGLONG begine_pos);
   DWORD GetStatus(void) const;
   std::string GetRecvString(void) const;
 
 private:
   
   HRESULT OnReadComplete(const void* info, DWORD length);
-
-  int InitRequest(const std::wstring& url);
+  void AddField(const std::wstring& field, const char* data, DWORD len);
   void InitBoundary(void);
 
   ult::WinHttpSession session_;
@@ -38,9 +43,14 @@ private:
   std::string aboundary_;
   std::wstring wboundary_;
   std::string sendfield_;
+  std::wstring header_;
+  std::string postbegin_;
   std::string postend_;
   DWORD status_;
   std::string string_rcv_;
+  std::wstring url_;
+  std::string ufilename_;
+  std::vector<PostField> post_fields_;
   
   static const std::string kLineEnd_;
   static const std::wstring kLineEndW_;

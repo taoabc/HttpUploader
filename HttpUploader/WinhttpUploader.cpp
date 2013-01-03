@@ -12,7 +12,6 @@ WinhttpUploader::WinhttpUploader(void) {
   InitBoundary();
 }
 
-
 WinhttpUploader::~WinhttpUploader(void) {
 }
 
@@ -24,10 +23,11 @@ void WinhttpUploader::InitBoundary(void) {
 }
 
 void WinhttpUploader::Reset(void) {
-  session_.Close();
-  connection_.Close();
   this->Close();
+  connection_.Close();
+  session_.Close();
   InitBoundary();
+  sendfield_.clear();
 }
 
 int WinhttpUploader::InitRequest(const std::wstring& url) {
@@ -59,65 +59,30 @@ void WinhttpUploader::AddField(const std::wstring& field, const char* data, DWOR
   sendfield_ += kLineEnd_;
 }
 
-int WinhttpUploader::BeginPost(const std::wstring& url, const std::wstring& filename,
-                               ULONGLONG sendsize, const std::wstring& field) {
-  int ret = InitRequest(url);
-  if (ret != ult::HttpStatus::kSuccess) {
-    return ret;
+void WinhttpUploader::ClearField( void ) {
+  sendfield_.clear();
+}
+
+HRESULT WinhttpUploader::PostFile(const void* data, DWORD len, ULONGLONG begine_pos) {
+  Reset();
+  RETURN_IF_FAILED(InitRequest(url_));
+  BOOST_FOREACH(PostField field, post_fields_) {
+    std::string uvalue = ult::UnicodeToUtf8(field.value);
+    AddField(field.key, uvalue.c_str(), uvalue.length());
   }
-  std::wstring header = L"Content-Type: multipart/form-data; boundary=" + wboundary_ + kLineEndW_;
-  std::string postbegin;
-  //biuld begin
-  postbegin = "--" + aboundary_ + kLineEnd_ + "Content-Disposition: form-data; name=\"";
-  postbegin += ult::UnicodeToAnsi(field) + "\"; filename=\"";
-  postbegin += ult::UnicodeToAnsi(filename) + "\"" + kLineEnd_ + "Content-Type: application/octet-stream" + kLineEnd_ + kLineEnd_;
-  //biuld end
+  header_ = L"Content-Type: multipart/form-data; boundary=" + wboundary_ + kLineEndW_;
+  postbegin_ = "--" + aboundary_ + kLineEnd_ + "Content-Disposition: form-data; name=\"file\"; filename=\"";
+  postbegin_ += ufilename_ + "\"" + kLineEnd_ + "Content-Type: application/octet-stream" + kLineEnd_ + kLineEnd_;
   postend_ = kLineEnd_ + "--" + aboundary_ + "--" + kLineEnd_;
-  size_t l1 = sendfield_.length();
-  size_t l2 = postbegin.length();
-  size_t l3 = postend_.length();
-  UINT64 total_size = sendsize + sendfield_.length() + postbegin.length() + postend_.length();
-  total_size = total_size > 0xffffffff ? 0xffffffff : total_size;
-  HRESULT hr;
-  DWORD shell_version = ult::GetShellVersion();
-  WORD major_version = HIWORD(shell_version);
-  WORD minor_version = LOWORD(shell_version);
-  //vista+
-  if (major_version >= 6) {
-    header += L"Content-Length: ";
-    std::wstring str_total_size = ult::UIntToString(total_size);
-    header += str_total_size + kLineEndW_;
-    hr = SendRequest(header.c_str(), -1L, NULL, 0, WINHTTP_IGNORE_REQUEST_TOTAL_LENGTH);
-  //xp
-  } else if (major_version == 5) {
-    if (total_size > 0xffffffff) {
-      return ult::HttpStatus::kUnknownError;
-    }
-    hr = SendRequest(header.c_str(), -1L, NULL, 0, (DWORD)total_size);
-  }
-  if (FAILED(hr)) {
-    return ult::HttpStatus::kSendRequestError;
-  }
-  if (sendfield_.length() > 0) {
-    hr = WriteData(sendfield_.c_str(), sendfield_.length());
-    if (FAILED(hr)) {
-      return ult::HttpStatus::kUnknownError;
-    }
-  }
-  hr = WriteData(postbegin.c_str(), postbegin.length());
-  if (FAILED(hr)) {
-    return ult::HttpStatus::kUnknownError;
-  }
-  return ult::HttpStatus::kSuccess;
-}
 
-HRESULT WinhttpUploader::PostFile(const void* data, DWORD len) {
-  return WriteData(data, len);
-}
-
-HRESULT WinhttpUploader::EndPost(void) {
-  HRESULT hr = WriteData(postend_.c_str(), postend_.length());
-  RETURN_IF_FAILED(hr);
+  std::string begin_pos_str = std::to_string(begine_pos);
+  std::string sendfiled = AddTempFiled(L"start", begin_pos_str.c_str(), begin_pos_str.length());
+  DWORD total_size = len + sendfiled.length() + postbegin_.length() + postend_.length();
+  RETURN_IF_FAILED(SendRequest(header_.c_str(), -1L, NULL, 0, total_size));
+  RETURN_IF_FAILED(WriteData(sendfiled.c_str(), sendfiled.length()));
+  RETURN_IF_FAILED(WriteData(postbegin_.c_str(), postbegin_.length()));
+  RETURN_IF_FAILED(WriteData(data, len));
+  RETURN_IF_FAILED(WriteData(postend_.c_str(), postend_.length()));
   string_rcv_.clear();
   return RecieveResponse(&status_);
 }
@@ -133,4 +98,20 @@ HRESULT WinhttpUploader::OnReadComplete( const void* info, DWORD length ) {
 
 std::string WinhttpUploader::GetRecvString( void ) const {
   return string_rcv_;
+}
+
+HRESULT WinhttpUploader::PreparePost( const std::wstring& url, const std::wstring& filename,
+                                      const std::vector<PostField>& post_fields) {
+  url_ = url;
+  ufilename_ = ult::UnicodeToUtf8(filename);
+  post_fields_ = post_fields;
+  return S_OK;
+}
+
+std::string WinhttpUploader::AddTempFiled( const std::wstring& field, const char* data, DWORD len ) {
+  std::string sendfield = sendfield_ + "--" + aboundary_ + kLineEnd_ + "Content-Disposition: form-data; name=\"";
+  sendfield += ult::UnicodeToUtf8(field) + "\"" + kLineEnd_ + kLineEnd_;
+  sendfield.append(data, len);
+  sendfield += kLineEnd_;
+  return sendfield;
 }

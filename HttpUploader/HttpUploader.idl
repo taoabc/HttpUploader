@@ -91,4 +91,3 @@ library HttpUploaderLib
 		[default] interface IPartition;
 	};
 };
-
