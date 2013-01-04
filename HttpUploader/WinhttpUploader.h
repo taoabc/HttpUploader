@@ -54,4 +54,5 @@ private:
   
   static const std::string kLineEnd_;
   static const std::wstring kLineEndW_;
+  static const DWORD kChunkSize_;
 };

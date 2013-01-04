@@ -70,7 +70,9 @@
           Uploader.OnStateChanged = JsOnStateChange;
           Uploader.OnPost = JsOnPost;
           Uploader.AddField("md5", "125125245");
-          Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php";
+          Uploader.RangeSize = 1024 * 1024 * 2;
+          Uploader.PostUrl = "http://demo.178mp.com/netdisk/validator?loginName=admin";
+          //Uploader.PostUrl = "http://127.0.0.1/uploader/upload.php";
           Uploader.LocalFile = list.At(0);
           Uploader.Post();
         }

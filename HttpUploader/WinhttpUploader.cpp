@@ -7,6 +7,7 @@
 
 const std::string WinhttpUploader::kLineEnd_ = "\r\n";
 const std::wstring WinhttpUploader::kLineEndW_ = L"\r\n";
+const DWORD WinhttpUploader::kChunkSize_ = 65536;
 
 WinhttpUploader::WinhttpUploader(void) {
   InitBoundary();
@@ -70,7 +71,7 @@ HRESULT WinhttpUploader::PostFile(const void* data, DWORD len, ULONGLONG begine_
     std::string uvalue = ult::UnicodeToUtf8(field.value);
     AddField(field.key, uvalue.c_str(), uvalue.length());
   }
-  header_ = L"Content-Type: multipart/form-data; boundary=" + wboundary_ + kLineEndW_;
+  header_ = L"Connection: Keep-Alive" + kLineEndW_ + L"Content-Type: multipart/form-data; boundary=" + wboundary_ + kLineEndW_;
   postbegin_ = "--" + aboundary_ + kLineEnd_ + "Content-Disposition: form-data; name=\"file\"; filename=\"";
   postbegin_ += ufilename_ + "\"" + kLineEnd_ + "Content-Type: application/octet-stream" + kLineEnd_ + kLineEnd_;
   postend_ = kLineEnd_ + "--" + aboundary_ + "--" + kLineEnd_;
@@ -81,7 +82,13 @@ HRESULT WinhttpUploader::PostFile(const void* data, DWORD len, ULONGLONG begine_
   RETURN_IF_FAILED(SendRequest(header_.c_str(), -1L, NULL, 0, total_size));
   RETURN_IF_FAILED(WriteData(sendfiled.c_str(), sendfiled.length()));
   RETURN_IF_FAILED(WriteData(postbegin_.c_str(), postbegin_.length()));
-  RETURN_IF_FAILED(WriteData(data, len));
+  DWORD writed = 0;
+  while (writed < len) {
+    DWORD leftlen = len - writed;
+    DWORD towrite = leftlen > kChunkSize_ ? kChunkSize_ : leftlen;
+    RETURN_IF_FAILED(WriteData((char*)data+writed, towrite));
+    writed += towrite;
+  }
   RETURN_IF_FAILED(WriteData(postend_.c_str(), postend_.length()));
   string_rcv_.clear();
   return RecieveResponse(&status_);

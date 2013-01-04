@@ -288,10 +288,6 @@ void CUploader::PostThread( ULONGLONG start_pos ) {
   }
   HRESULT hr;
   WinhttpUploader uploader;
-  /*BOOST_FOREACH(PostField field, post_fields_) {
-  std::string uvalue = ult::UnicodeToUtf8(field.value);
-  uploader.AddField(field.key, uvalue.c_str(), uvalue.length());
-  }*/
 
   posted_length_ = start_pos;
   hr = uploader.PreparePost(post_url_, local_file_, post_fields_);
@@ -354,6 +350,7 @@ void CUploader::PostThread( ULONGLONG start_pos ) {
     return;
   }
   recv_string_ = ult::Utf8ToUnicode(uploader.GetRecvString());
+  http_status_ = uploader.GetStatus();
   SendOnPostMsg(0, file_size_, 0);
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploadComplete);
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateLeisure);
@@ -374,6 +371,7 @@ void CUploader::OnPostTimer( void ) {
   DWORD used_time = ::GetTickCount() - begin_post_time_;
   ULONGLONG sended = new_posted - begin_post_cursor_;
   ULONGLONG avg_speed = (sended / used_time) * 1000;
+  avg_speed = (avg_speed == 0 ? 1 : avg_speed);
   left_time = (DWORD)((file_size_ - new_posted) / avg_speed);
   if (on_post_ != NULL) {
     OnPostCallback(speed, new_posted, percent, left_time);
@@ -450,7 +448,7 @@ void CUploader::FinalRelease( void ) {
   msgwnd_.KillPostTimer();
   for (auto iter = thread_vec_.begin(); iter != thread_vec_.end(); ++iter) {
     iter->interrupt();
-    iter->timed_join(boost::posix_time::milliseconds(1000));
+    iter->timed_join(boost::posix_time::milliseconds(500));
   }
   thread_vec_.clear();
   on_post_.Release();
