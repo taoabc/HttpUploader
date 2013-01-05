@@ -102,7 +102,9 @@ STDMETHODIMP CUploader::get_LocalFile(BSTR* pVal) {
 STDMETHODIMP CUploader::put_LocalFile(BSTR newVal) {
   // TODO: Add your implementation code here
   local_file_.assign(newVal, ::SysStringLen(newVal));
-  file_size_ = boost::filesystem::file_size(local_file_);
+  if (boost::filesystem::exists(local_file_)) {
+    file_size_ = boost::filesystem::file_size(local_file_);
+  }
   return S_OK;
 }
 
@@ -235,6 +237,10 @@ STDMETHODIMP CUploader::Stop(BYTE* result) {
 
 void CUploader::CalcMd5Thread( const std::wstring& file ) {
   //文件大小为0，返回
+  if (!boost::filesystem::exists(file)) {
+    SetError(err::kMd5FileOpenError);
+    return;
+  }
   if (0 == boost::filesystem::file_size(file)) {
     SetError(err::kMd5FileSizeZero);
     return;
