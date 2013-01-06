@@ -82,13 +82,25 @@ public:
       break;
     case 2:
     case 5:
-      return GetArrayAt(pdisp_params->rgvarg[0].ulVal, pvar_result);
+      {
+        CComVariant idx(pdisp_params->rgvarg[0]);
+        idx.ChangeType(VT_UI4);
+        return GetArrayAt(idx.ulVal, pvar_result);
+      }
       break;
     case 3:
-      return LBound(pdisp_params->rgvarg[0].ulVal, pvar_result);
+      {
+        CComVariant bound(pdisp_params->rgvarg[0]);
+        bound.ChangeType(VT_UI4);
+        return LBound(bound.ulVal, pvar_result);
+      }
       break;
     case 4:
-      return UBound(pdisp_params->rgvarg[0].ulVal, pvar_result);
+      {
+        CComVariant bound(pdisp_params->rgvarg[0]);
+        bound.ChangeType(VT_UI4);
+        return UBound(bound.ulVal, pvar_result);
+      }
       break;
     default:
       break;

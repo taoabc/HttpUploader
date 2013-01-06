@@ -48,7 +48,7 @@ bool CPartition::GetOpenFiles(HWND hwnd, std::wstring file_filter, bool multi_se
   if (multi_select) {
     ofn.Flags |= OFN_ALLOWMULTISELECT;
   }
-  if (FALSE == GetOpenFileName(&ofn)) {
+  if (FALSE == ::GetOpenFileName(&ofn)) {
     delete[] files;
     return false;
   }
@@ -91,12 +91,23 @@ std::wstring CPartition::NormalFileFilter( const std::wstring& filter ) {
   }
   std::vector<std::wstring> vec;
   ult::SplitString(filter, L",", &vec);
-  std::wstring result(L"Allowed Files");
-  ult::StringAddNull(&result);
-  BOOST_FOREACH(std::wstring item, vec) {
-    result += L"*." + item + L";";
+  std::wstring result(L"Allowed Files(");
+  if (vec.size() == 0) {
+    result += L"*.*)";
+    ult::StringAddNull(&result);
+    result += L"*.*";
+  } else {
+    BOOST_FOREACH(std::wstring item, vec) {
+      result += L"*." + item + L" ";
+    }
+    result.pop_back();
+    result += L")";
+    ult::StringAddNull(&result);
+    BOOST_FOREACH(std::wstring item, vec) {
+      result += L"*." + item + L";";
+    }
+    result.pop_back();
   }
-  result.pop_back();
   ult::StringAddNull(&result);
   ult::StringAddNull(&result);
   return result;
