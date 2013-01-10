@@ -293,10 +293,9 @@ void CUploader::PostThread( ULONGLONG start_pos ) {
     return;
   }
   HRESULT hr;
-  WinhttpUploader uploader;
 
   posted_length_ = start_pos;
-  hr = uploader.PreparePost(post_url_, local_file_, post_fields_);
+  hr = uploader_.PreparePost(post_url_, local_file_, post_fields_);
   if (FAILED(hr)) {
     error_msg_ = L"连接服务器错误";
     SetError(err::kConnectError);
@@ -307,7 +306,6 @@ void CUploader::PostThread( ULONGLONG start_pos ) {
   stop_ = false;
   begin_post_time_ = ::GetTickCount();
   begin_post_cursor_ = posted_length_;
-  msgwnd_.SetPostTimer();
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploading);
   SendOnPostMsg(0, posted_length_, 0);
   ULONGLONG new_pos;
@@ -322,6 +320,7 @@ void CUploader::PostThread( ULONGLONG start_pos ) {
   bool isok = true;
   LONG last_state = 0;
   ult::SimpleBuffer buffer(buf_len);
+  msgwnd_.SetPostTimer();
   //循环读取文件
   while (posted_length_ < file_size_) {
     boost::this_thread::interruption_point();
@@ -340,7 +339,7 @@ void CUploader::PostThread( ULONGLONG start_pos ) {
       last_state = state::kStateError;
       break;
     }
-    hr = uploader.PostFile(buffer.Data(), readed, posted_length_);
+    hr = uploader_.PostFile(buffer.Data(), readed, posted_length_);
     if (FAILED(hr)) {
       isok = false;
       error_msg_ = L"POST过程中发生错误";
@@ -355,8 +354,8 @@ void CUploader::PostThread( ULONGLONG start_pos ) {
     msgwnd_.SendMessage(UM_STATE_CHANGE, last_state);
     return;
   }
-  recv_string_ = ult::Utf8ToUnicode(uploader.GetRecvString());
-  http_status_ = uploader.GetStatus();
+  recv_string_ = ult::Utf8ToUnicode(uploader_.GetRecvString());
+  http_status_ = uploader_.GetStatus();
   SendOnPostMsg(0, file_size_, 0);
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateUploadComplete);
   msgwnd_.SendMessage(UM_STATE_CHANGE, state::kStateLeisure);
@@ -365,13 +364,16 @@ void CUploader::PostThread( ULONGLONG start_pos ) {
 void CUploader::OnPostTimer( void ) {
   static ULONGLONG old_posted = posted_length_;
   static DWORD oldtk = ::GetTickCount();
+  static ULONGLONG old_speed = 1;
   DWORD newtk = ::GetTickCount();
   //如果过小，不计算速度
-  if (newtk - oldtk < 800) {
+  if (newtk - oldtk < 500) {
     return;
   }
-  ULONGLONG new_posted = posted_length_;
+  ULONGLONG new_posted = posted_length_ + uploader_.GetWritted();
   ULONGLONG speed = (ULONGLONG)(new_posted - old_posted) * 1000 / (newtk - oldtk);
+  speed = (speed == 0 ? old_speed : speed);
+  old_speed = speed;
   USHORT percent = (USHORT)ult::UIntMultDiv(new_posted, 100, file_size_);
   DWORD left_time = 0;
   DWORD used_time = ::GetTickCount() - begin_post_time_;

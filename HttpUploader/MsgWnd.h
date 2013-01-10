@@ -53,5 +53,5 @@ private:
 
   UINT_PTR post_timer_;
 
-  static const UINT kCheckPostInteval_ = 1000;
+  static const UINT kCheckPostInteval_ = 1500;
 };

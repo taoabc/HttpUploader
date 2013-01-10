@@ -30,6 +30,7 @@ public:
   HRESULT PostFile(const void* data, DWORD len, ULONGLONG begine_pos);
   DWORD GetStatus(void) const;
   std::string GetRecvString(void) const;
+  DWORD GetWritted(void) const;
 
 private:
   
@@ -51,6 +52,8 @@ private:
   std::wstring url_;
   std::string ufilename_;
   std::vector<PostField> post_fields_;
+
+  DWORD writed_;
   
   static const std::string kLineEnd_;
   static const std::wstring kLineEndW_;

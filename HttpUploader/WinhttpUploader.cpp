@@ -82,16 +82,18 @@ HRESULT WinhttpUploader::PostFile(const void* data, DWORD len, ULONGLONG begine_
   RETURN_IF_FAILED(SendRequest(header_.c_str(), -1L, NULL, 0, total_size));
   RETURN_IF_FAILED(WriteData(sendfiled.c_str(), sendfiled.length()));
   RETURN_IF_FAILED(WriteData(postbegin_.c_str(), postbegin_.length()));
-  DWORD writed = 0;
-  while (writed < len) {
-    DWORD leftlen = len - writed;
+  writed_ = 0;
+  while (writed_ < len) {
+    DWORD leftlen = len - writed_;
     DWORD towrite = leftlen > kChunkSize_ ? kChunkSize_ : leftlen;
-    RETURN_IF_FAILED(WriteData((char*)data+writed, towrite));
-    writed += towrite;
+    RETURN_IF_FAILED(WriteData((char*)data+writed_, towrite));
+    writed_ += towrite;
   }
   RETURN_IF_FAILED(WriteData(postend_.c_str(), postend_.length()));
   string_rcv_.clear();
-  return RecieveResponse(&status_);
+  RETURN_IF_FAILED(RecieveResponse(&status_));
+  writed_ = 0;
+  return S_OK;
 }
 
 DWORD WinhttpUploader::GetStatus( void ) const {
@@ -121,4 +123,8 @@ std::string WinhttpUploader::AddTempFiled( const std::wstring& field, const char
   sendfield.append(data, len);
   sendfield += kLineEnd_;
   return sendfield;
+}
+
+DWORD WinhttpUploader::GetWritted( void ) const {
+  return writed_;
 }

@@ -148,6 +148,8 @@ private:
 
   std::vector<boost::thread> thread_vec_;
 
+  WinhttpUploader uploader_;
+
 public:
 
   // IObjectWithSite
