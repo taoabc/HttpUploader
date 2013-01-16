@@ -47,6 +47,17 @@ int WinhttpUploader::InitRequest(const std::wstring& url) {
   if (FAILED(hr)) {
     return ult::HttpStatus::kOpenRequestError;
   }
+
+  DWORD flags;
+  DWORD l = sizeof (flags);            
+  WinHttpQueryOption(GetHandle(), WINHTTP_OPTION_SECURITY_FLAGS,
+    (LPVOID)&flags, &l);
+  flags |= SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+  flags |= SECURITY_FLAG_IGNORE_CERT_DATE_INVALID;
+  flags |= SECURITY_FLAG_IGNORE_CERT_CN_INVALID;
+
+  WinHttpSetOption(GetHandle(), WINHTTP_OPTION_SECURITY_FLAGS,
+    &flags, sizeof (flags));
   return ult::HttpStatus::kSuccess;
 }
 
