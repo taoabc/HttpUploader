@@ -96,6 +96,10 @@ public:
     return S_OK;
   }
 
+  HINTERNET GetHandle(void) const {
+    return handle_.GetHandle();
+  }
+
 protected:
 
   /* these two functions will be called at receving content
