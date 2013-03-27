@@ -80,7 +80,7 @@ bool CPartition::GetOpenDir( HWND hwnd, std::wstring* dir ) {
   wchar_t buf[MAX_PATH];
   BROWSEINFO bi;
   memset(&bi, 0, sizeof (bi));
-  bi.hwndOwner = hwnd_browser_;
+  bi.hwndOwner = hwnd;
   bi.pszDisplayName = buf;
   bi.ulFlags = BIF_NEWDIALOGSTYLE;
   PIDLIST_ABSOLUTE pa = SHBrowseForFolder(&bi);
