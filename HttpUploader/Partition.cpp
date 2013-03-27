@@ -48,24 +48,32 @@ bool CPartition::GetOpenFiles(HWND hwnd, std::wstring file_filter, bool multi_se
   if (multi_select) {
     ofn.Flags |= OFN_ALLOWMULTISELECT;
   }
-  if (FALSE == ::GetOpenFileName(&ofn)) {
-    delete[] files;
-    return false;
-  }
-  wchar_t* p = files;
-  std::wstring dir(p);
-  p += wcslen(p) + 1;
-  if (*p == NULL) {
-    pvec->push_back(dir);
-  }
-  while (*p != NULL) {
-    std::wstring file_path(dir);
-    ult::AppendPath(&file_path, p);
-    pvec->push_back(file_path);
+  bool result = false;
+  do {
+    if (FALSE == ::GetOpenFileName(&ofn)) {
+      break;
+    }
+    if (!multi_select) {
+      pvec->push_back(files);
+      break;
+    }
+    wchar_t* p = files;
+    std::wstring dir(p);
     p += wcslen(p) + 1;
-  }
+    if (*p == NULL) {
+      pvec->push_back(dir);
+    }
+    while (*p != NULL) {
+      std::wstring file_path(dir);
+      ult::AppendPath(&file_path, p);
+      pvec->push_back(file_path);
+      p += wcslen(p) + 1;
+    }
+    result = true;
+  } while (false);
+  
   delete[] files;
-  return true;
+  return result;
 }
 
 bool CPartition::GetOpenDir( HWND hwnd, std::wstring* dir ) {
